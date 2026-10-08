@@ -71,6 +71,33 @@ function saveLikesCount(likesFile, count) {
   renameSync(tempFile, likesFile);
 }
 
+// Rate limit: at most N requests per IP inside a sliding window. Fail-open on errors.
+const chatRateBuckets = new Map();
+function getRateLimit() { return Number(process.env.CHAT_RATE_LIMIT || 5); }
+function getRateWindowMs() { return Number(process.env.CHAT_RATE_WINDOW_MS || 60_000); }
+
+function getClientKey(request) {
+  const forwarded = request.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    return forwarded.split(',')[0].trim();
+  }
+  return request.socket?.remoteAddress || 'unknown';
+}
+
+function checkRateLimit(key, limit, windowMs) {
+  if (!Number.isFinite(limit) || limit <= 0) return { allowed: true, remaining: limit, resetMs: 0 };
+  const now = Date.now();
+  const bucket = chatRateBuckets.get(key) || [];
+  const recent = bucket.filter((timestamp) => now - timestamp < windowMs);
+  if (recent.length >= limit) {
+    const oldest = recent[0];
+    return { allowed: false, remaining: 0, resetMs: Math.max(0, windowMs - (now - oldest)) };
+  }
+  recent.push(now);
+  chatRateBuckets.set(key, recent);
+  return { allowed: true, remaining: limit - recent.length, resetMs: windowMs };
+}
+
 async function handleChat(request, response, fetchImpl) {
   if (request.method !== 'POST') {
     writeJson(response, 405, { error: 'METHOD_NOT_ALLOWED' });
@@ -82,6 +109,19 @@ async function handleChat(request, response, fetchImpl) {
     writeJson(response, 503, {
       error: 'LLM_NOT_CONFIGURED',
       message: '服务端尚未配置 LLM_API_KEY，当前使用本地兜底回复。'
+    });
+    return;
+  }
+
+  const rateKey = getClientKey(request);
+  const rate = checkRateLimit(rateKey, getRateLimit(), getRateWindowMs());
+  if (!rate.allowed) {
+    const retryAfterSec = Math.ceil(rate.resetMs / 1000);
+    if (typeof response.setHeader === 'function') response.setHeader('Retry-After', retryAfterSec);
+    writeJson(response, 429, {
+      error: 'RATE_LIMITED',
+      message: '请求太频繁，请稍后再试',
+      retryAfterMs: rate.resetMs
     });
     return;
   }

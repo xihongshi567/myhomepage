@@ -189,3 +189,89 @@ test('stores likes and restores the count after a server restart', async () => {
     await rm(tempDir, { recursive: true, force: true });
   }
 });
+
+test('enforces the IP rate limit on /api/chat', async () => {
+  const previousKey = process.env.LLM_API_KEY;
+  const previousLimit = process.env.CHAT_RATE_LIMIT;
+  process.env.LLM_API_KEY = 'test-secret';
+  process.env.CHAT_RATE_LIMIT = '3';
+  const { createStaticServer } = await import('./server.mjs');
+  const server = createStaticServer(undefined, {
+    fetchImpl: async () => new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' }
+    })
+  });
+  await new Promise((resolve) => server.listen(0, resolve));
+  const { port } = server.address();
+
+  const post = () => fetch(`http://127.0.0.1:${port}/api/chat`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.7' },
+    body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }] })
+  });
+
+  try {
+    const r1 = await post();
+    const r2 = await post();
+    const r3 = await post();
+    const r4 = await post();
+    assert.equal(r1.status, 200);
+    assert.equal(r2.status, 200);
+    assert.equal(r3.status, 200);
+    assert.equal(r4.status, 429);
+    const body4 = await r4.json();
+    assert.equal(body4.error, 'RATE_LIMITED');
+    assert.ok(body4.retryAfterMs > 0);
+    assert.equal(r4.headers.get('retry-after'), String(Math.ceil(body4.retryAfterMs / 1000)));
+  } finally {
+    if (previousKey === undefined) delete process.env.LLM_API_KEY;
+    else process.env.LLM_API_KEY = previousKey;
+    if (previousLimit === undefined) delete process.env.CHAT_RATE_LIMIT;
+    else process.env.CHAT_RATE_LIMIT = previousLimit;
+    await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test('does not count rate-limited requests toward later successful calls', async () => {
+  const previousKey = process.env.LLM_API_KEY;
+  const previousLimit = process.env.CHAT_RATE_LIMIT;
+  const previousWindow = process.env.CHAT_RATE_WINDOW_MS;
+  process.env.LLM_API_KEY = 'test-secret';
+  process.env.CHAT_RATE_LIMIT = '2';
+  process.env.CHAT_RATE_WINDOW_MS = '50';
+  const { createStaticServer } = await import('./server.mjs');
+  const server = createStaticServer(undefined, {
+    fetchImpl: async () => new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' }
+    })
+  });
+  await new Promise((resolve) => server.listen(0, resolve));
+  const { port } = server.address();
+
+  const post = () => fetch(`http://127.0.0.1:${port}/api/chat`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.8' },
+    body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }] })
+  });
+
+  try {
+    await post();
+    await post();
+    const blocked = await post();
+    assert.equal(blocked.status, 429);
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    const recovered = await post();
+    assert.equal(recovered.status, 200);
+  } finally {
+    if (previousKey === undefined) delete process.env.LLM_API_KEY;
+    else process.env.LLM_API_KEY = previousKey;
+    if (previousLimit === undefined) delete process.env.CHAT_RATE_LIMIT;
+    else process.env.CHAT_RATE_LIMIT = previousLimit;
+    if (previousWindow === undefined) delete process.env.CHAT_RATE_WINDOW_MS;
+    else process.env.CHAT_RATE_WINDOW_MS = previousWindow;
+    await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
