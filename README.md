@@ -36,3 +36,20 @@ npm start
 ## 点赞数据
 
 访客点赞后，数量会保存在 `data/likes.json`。同一浏览器会通过本地标记避免重复点赞；更换浏览器或清除站点数据后可以再次点赞。
+
+
+## 部署到 Cloudflare Workers（免费）
+
+完整步骤见 [DEPLOY.md](./DEPLOY.md)。简要流程：
+
+```powershell
+npm install -g wrangler
+wrangler login
+wrangler kv namespace create LIKES         # 把输出里的 id 填到 wrangler.toml
+wrangler secret put LLM_API_KEY            # 粘贴你的 OpenAI / 中转服务 Key
+wrangler deploy
+```
+
+部署后得到一个 `*.workers.dev` 临时域名，绑定自己的域名只需在 Cloudflare 仪表盘点几下。
+
+线上版的所有接口（`/api/likes`、`/api/chat`、`/api/chat/status`）在 `worker/index.mjs` 里实现，点赞存 KV、聊天限流保护 Key。
