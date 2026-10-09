@@ -1,0 +1,8 @@
+{
+  "name": "he-yuan-personal-homepage",
+  "cloudFunctions": {
+    "nodejs": {
+      "maxDuration": 30
+    }
+  }
+}

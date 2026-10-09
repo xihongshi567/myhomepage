@@ -4,7 +4,7 @@ import { dirname, extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
-const homepageFile = '首页方案-1（可爱极简便当）.htm';
+const homepageFile = 'index.html';
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
   '.gif': 'image/gif',

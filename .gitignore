@@ -1,3 +1,11 @@
+# Local secrets & runtime data
 .env
 node_modules/
 data/likes.json
+
+# Tencent Cloud EdgeOne (added by `edgeone login`)
+.edgeone/
+*.tef_dist/
+
+# IDE
+.idea/

@@ -1,54 +1,18 @@
-﻿// Cloudflare Workers entry. Serves the static site and the /api/* endpoints
-// (likes via KV, chat via the upstream LLM with rate limiting and secrets).
-
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-
-    // Likes API: store count in Cloudflare KV.
-    if (url.pathname === '/api/likes') {
-      if (request.method === 'GET') {
-        const raw = await env.LIKES.get('count');
-        const count = raw ? Number.parseInt(raw, 10) : 0;
-        return Response.json({ count: Number.isSafeInteger(count) && count >= 0 ? count : 0 });
-      }
-      if (request.method === 'POST') {
-        const raw = await env.LIKES.get('count');
-        const current = raw ? Number.parseInt(raw, 10) : 0;
-        const next = (Number.isSafeInteger(current) && current >= 0 ? current : 0) + 1;
-        await env.LIKES.put('count', String(next));
-        return Response.json({ count: next });
-      }
-      return new Response('Method Not Allowed', { status: 405 });
-    }
-
-    // Chat status: presence of LLM_API_KEY secret.
-    if (url.pathname === '/api/chat/status') {
-      return Response.json({ configured: Boolean(env.LLM_API_KEY) });
-    }
-
-    // Chat API: rate-limited, proxied to the upstream LLM.
-    if (url.pathname === '/api/chat') {
-      return handleChat(request, env, ctx);
-    }
-
-    // Static files: build a Node-style IncomingMessage and let the existing
-    // server handle it, then translate the response back to a Web Response.
-    return serveStatic(request, env);
-  }
-};
-
-// ------- Chat handler (rate-limited LLM proxy) -------
+// POST /api/chat — rate-limited proxy to the upstream LLM (DeepSeek).
+//
+// Reuses the same logic that lived in the Cloudflare Worker: validate the
+// message list, check the per-IP rate bucket, call the OpenAI-compatible
+// endpoint, and fall back to local rule-based answers when the upstream fails.
+//
+// Environment variables (set in the Makers console, or locally via
+// `edgeone makers link` + `edgeone makers env set ...`):
+//   LLM_API_KEY   (secret, required for real replies)
+//   LLM_API_URL   (default https://api.deepseek.com/v1/chat/completions)
+//   LLM_MODEL     (default deepseek-chat)
 
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60_000;
 const buckets = new Map();
-
-function getClientKey(request) {
-  return request.headers.get('cf-connecting-ip')
-    || request.headers.get('x-forwarded-for')?.split(',')[0].trim()
-    || 'unknown';
-}
 
 function checkRate(key, limit, windowMs) {
   const now = Date.now();
@@ -73,10 +37,9 @@ function fallbackAnswer(text) {
   return '这个问题我还在学习中。你可以尝试下面的快捷问题，或者发邮件到 3432419466@qq.com，直接和何媛本人交流。';
 }
 
-async function handleChat(request, env) {
-  if (request.method !== 'POST') {
-    return Response.json({ error: 'METHOD_NOT_ALLOWED' }, { status: 405 });
-  }
+export async function onRequestPost(context) {
+  const env = context.env || {};
+
   if (!env.LLM_API_KEY) {
     return Response.json({
       error: 'LLM_NOT_CONFIGURED',
@@ -84,7 +47,7 @@ async function handleChat(request, env) {
     }, { status: 503 });
   }
 
-  const rate = checkRate(getClientKey(request), RATE_LIMIT, RATE_WINDOW_MS);
+  const rate = checkRate(context.clientIp || 'unknown', RATE_LIMIT, RATE_WINDOW_MS);
   if (!rate.allowed) {
     return new Response(JSON.stringify({
       error: 'RATE_LIMITED',
@@ -100,7 +63,7 @@ async function handleChat(request, env) {
   }
 
   let body;
-  try { body = await request.json(); }
+  try { body = await context.request.json(); }
   catch { return Response.json({ error: 'INVALID_JSON' }, { status: 400 }); }
 
   const messages = Array.isArray(body.messages) ? body.messages : [];
@@ -115,8 +78,8 @@ async function handleChat(request, env) {
 
   const systemPrompt = '你是何媛的数字分身。请用可爱、友好、简洁的中文回答，只回答与何媛本人、经历、技能、作品、兴趣或联系方式相关的问题。何媛就读于成都理工大学（双一流）本科，大数据管理与应用专业，是27届应届生，擅长AI应用与知识整理，兴趣包括用AI给生活赋能、阅读、旅行和打太极。邮箱是3432419466@qq.com，GitHub是https://github.com/xihongshi567，Gitee是https://gitee.com/he-xihongshi，代表作品是个人主页・数字分身。';
 
-  const endpoint = env.LLM_API_URL || 'https://api.openai.com/v1/chat/completions';
-  const model = env.LLM_MODEL || 'gpt-4o-mini';
+  const endpoint = env.LLM_API_URL || 'https://api.deepseek.com/v1/chat/completions';
+  const model = env.LLM_MODEL || 'deepseek-chat';
   try {
     const upstream = await fetch(endpoint, {
       method: 'POST',
@@ -140,51 +103,11 @@ async function handleChat(request, env) {
       return Response.json({ error: 'LLM_EMPTY_RESPONSE' }, { status: 502 });
     }
     return Response.json({ reply: reply.trim(), source: 'llm' });
-  } catch (err) {
+  } catch {
     // Upstream failed: fall back to the local rule-based answer so the user
     // still gets a useful response instead of an error.
     const lastUser = [...messages].reverse().find((m) => m.role === 'user');
     const reply = fallbackAnswer(typeof lastUser?.content === 'string' ? lastUser.content : '');
     return Response.json({ reply, source: 'fallback' });
   }
-}
-
-// ------- Static file serving via Workers Assets -------
-
-const contentTypes = {
-  '.css': 'text/css; charset=utf-8',
-  '.gif': 'image/gif',
-  '.htm': 'text/html; charset=utf-8',
-  '.html': 'text/html; charset=utf-8',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.png': 'image/png',
-  '.svg': 'image/svg+xml',
-  '.webp': 'image/webp'
-};
-
-const HOMEPAGE = '首页方案-1（可爱极简便当）.htm';
-
-async function serveStatic(request, env) {
-  const url = new URL(request.url);
-  let pathname = decodeURIComponent(url.pathname);
-  if (pathname === '/' || pathname === '/index.html') pathname = '/' + HOMEPAGE;
-  pathname = pathname.replace(/^\/+/, '');
-
-  // env.ASSETS is provided by the [assets] section in wrangler.toml.
-  const assetResponse = await env.ASSETS.fetch(new URL(pathname, url));
-  if (assetResponse.ok) {
-    const ext = pathname.slice(pathname.lastIndexOf('.')).toLowerCase();
-    const ct = contentTypes[ext];
-    if (ct) {
-      const headers = new Headers(assetResponse.headers);
-      headers.set('content-type', ct);
-      headers.set('cache-control', 'no-cache');
-      return new Response(assetResponse.body, { status: assetResponse.status, headers });
-    }
-    return assetResponse;
-  }
-  return new Response('Not Found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
 }
