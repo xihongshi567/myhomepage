@@ -240,6 +240,215 @@
       line-height: 1.65;
     }
 
+    .sig-experience-points {
+      margin-top: 8px;
+      padding-left: 0;
+      list-style: none;
+      color: var(--sig-ink-soft);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+    .sig-experience-points li {
+      position: relative;
+      padding-left: 14px;
+      margin-top: 4px;
+    }
+    .sig-experience-points li:first-child { margin-top: 0; }
+    .sig-experience-points li::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 0.6em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--sig-mint);
+    }
+    .sig-experience-item:nth-child(2) .sig-experience-points li::before { background: var(--sig-tomato-soft); }
+
+    /* 作品集：知识图谱 */
+    .sig-graph { display: block; width: 100%; height: auto; }
+    .sig-graph .node-bg { fill: #FFFFFF; stroke: var(--sig-line); transition: fill 0.2s ease, stroke 0.2s ease; }
+    .sig-graph .node-bg-center { fill: var(--sig-lilac); stroke: var(--sig-lilac); transition: fill 0.2s ease; }
+    .sig-graph a:hover .node-bg { fill: var(--sig-lilac); stroke: var(--sig-ink-soft); }
+    .sig-graph a:hover .node-bg-center { fill: var(--sig-mint); }
+    .sig-graph line { stroke: var(--sig-line); stroke-width: 1.5; }
+    .sig-graph text { fill: var(--sig-ink); font-family: inherit; }
+    .sig-graph .t-center-title { font-size: 16px; font-weight: 800; }
+    .sig-graph .t-center-sub { font-size: 11px; fill: var(--sig-ink-soft); }
+    .sig-graph .t-title { font-size: 13px; font-weight: 700; }
+    .sig-graph .t-sub { font-size: 11px; fill: var(--sig-ink-soft); }
+
+    /* ===== WORKS-GRAPH:BEGIN ===== */
+    /* 作品宇宙知识图谱 v1（D3 v7 力导向 + foreignObject 内嵌 HTML 药丸） */
+    #wf-wrap {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px 22px 20px 16px;
+      background: rgba(255, 255, 255, .5);
+    }
+    #wf-wrap svg { display: block; width: 100%; height: 100%; }
+    #wf-wrap g.wf-node { transition: opacity .25s ease; }
+    #wf-wrap g.wf-linkg { transition: opacity .25s ease; }
+    #wf-wrap g.wf-node-cat, #wf-wrap g.wf-node-leaf { cursor: pointer; }
+    #wf-wrap .wf-node { touch-action: none; }
+
+    /* 分类主题色（边色 / 光晕 / 强调色），挂在 g[data-tone] 上供后代继承 */
+    #wf-wrap g[data-tone="tomato"] { --wf-edge: #F5D9DD; --wf-glow: #FDF2F4; --wf-strong: #DFA3AA; }
+    #wf-wrap g[data-tone="peach"]  { --wf-edge: #F1E3BD; --wf-glow: #FFF7E3; --wf-strong: #E5C488; }
+    #wf-wrap g[data-tone="cream"]  { --wf-edge: #D6EBDF; --wf-glow: #EFF8F3; --wf-strong: #8FC8AA; }
+    #wf-wrap g[data-tone="plain"]  { --wf-edge: #EEDFE2; --wf-glow: #FFFFFF; --wf-strong: #C9A9B0; }
+
+    /* 连线：常态浅灰柔和曲线，聚焦时亮分类主题色 */
+    #wf-wrap path.wf-link { fill: none; stroke: var(--sig-line); stroke-width: 1.4px; }
+    #wf-wrap path.wf-link-leaf { stroke-width: 1.1px; opacity: .62; }
+    #wf-wrap g.wf-bold path.wf-link { stroke: var(--wf-strong); stroke-width: 2.4px; opacity: 1; }
+    #wf-wrap g.wf-bold .wf-dot { opacity: .85; }
+
+    /* 流动光点 */
+    #wf-wrap .wf-dot { fill: var(--wf-strong); opacity: .5; }
+
+    /* 聚焦 / 虚化 / 折叠隐藏 */
+    #wf-wrap g.wf-dim { opacity: .16; }
+    #wf-wrap g.wf-hidden { display: none; }
+
+    /* 节点药丸：白底 + 细彩边 + 同色系光晕，hover 软糖弹起 */
+    #wf-wrap .wf-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      box-sizing: border-box;
+      padding: 4px 11px;
+      background: #FFFFFF;
+      border: 1.5px solid var(--wf-edge, var(--sig-line));
+      border-radius: 999px;
+      font-size: 11px; line-height: 1.35;
+      color: var(--sig-ink);
+      white-space: nowrap;
+      box-shadow: 0 0 0 4px var(--wf-glow, rgba(255, 255, 255, .6)), 0 2px 8px rgba(149, 101, 110, .09);
+      transition: transform .18s var(--sig-ease-bounce), box-shadow .18s var(--sig-ease-bounce), border-color .18s ease;
+    }
+    #wf-wrap .wf-pill-cat { padding: 5px 14px; font-size: 12.5px; font-weight: 700; }
+    #wf-wrap .wf-pill-cat:hover { transform: scale(1.06); border-color: var(--wf-strong); }
+    #wf-wrap .wf-pill-leaf:hover {
+      transform: translateY(-2px) scale(1.04);
+      border-color: var(--wf-strong);
+      box-shadow: 0 0 0 6px var(--wf-glow), 0 4px 10px rgba(149, 101, 110, .12);
+    }
+    #wf-wrap .wf-pill-building { border-style: dashed; opacity: .82; }
+    #wf-wrap .wf-pill-building:hover { transform: none; border-color: var(--sig-line); }
+
+    /* 折叠箭头 */
+    #wf-wrap .wf-arrow { width: 10px; height: 10px; flex-shrink: 0; transition: transform .25s var(--sig-ease-bounce); }
+    #wf-wrap g.wf-collapsed .wf-arrow { transform: rotate(-90deg); }
+
+    /* 根节点：渐变胶囊 + 呼吸光晕 */
+    #wf-wrap .wf-root { position: relative; display: flex; }
+    #wf-wrap .wf-root-glow {
+      position: absolute; inset: -7px;
+      border-radius: 999px;
+      background: var(--sig-tomato-soft);
+      animation: wf-pulse 3.6s ease-in-out infinite;
+    }
+    #wf-wrap .wf-root-core {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: linear-gradient(160deg, #FBE4E7, #F3C6CC);
+      border: 1.5px solid #F0B4BC;
+      color: var(--sig-tomato-deep);
+      box-shadow: 0 2px 10px rgba(149, 101, 110, .14);
+    }
+    #wf-wrap .wf-root-name { font-size: 12.5px; font-weight: 800; letter-spacing: .02em; }
+    #wf-wrap .wf-root-sub { margin-top: 1px; font-size: 9.5px; opacity: .75; }
+    @keyframes wf-pulse {
+      0%, 100% { transform: scale(1); opacity: .3; }
+      50% { transform: scale(1.15); opacity: .55; }
+    }
+
+    /* 工具提示 */
+    #wf-wrap .wf-tip {
+      position: absolute; z-index: 5; pointer-events: none;
+      max-width: 220px;
+      padding: 5px 10px;
+      background: rgba(80, 69, 72, .92);
+      color: #FFFDF9;
+      font-size: 11px; line-height: 1.5;
+      border-radius: 9px 12px 9px 12px;
+      box-shadow: 0 4px 12px rgba(149, 101, 110, .25);
+      opacity: 0;
+      transition: opacity .15s ease;
+    }
+    #wf-wrap .wf-tip.is-show { opacity: 1; }
+    #wf-wrap .wf-tip b { display: block; font-size: 11.5px; font-weight: 700; }
+    #wf-wrap .wf-tip span { display: block; margin-top: 2px; font-size: 10px; opacity: .8; }
+
+    /* 作品详情卡 */
+    .wf-overlay {
+      position: fixed; inset: 0; z-index: 60;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      background: rgba(80, 69, 72, .28);
+      backdrop-filter: blur(3px);
+      animation: wf-fade-in .2s ease;
+    }
+    .wf-dialog {
+      width: min(380px, 100%);
+      padding: 22px 24px;
+      background: var(--sig-cream);
+      border: 1.5px solid var(--sig-line);
+      border-radius: 26px 30px 24px 28px;
+      box-shadow: 0 14px 40px rgba(149, 101, 110, .22);
+      animation: wf-pop .22s var(--sig-ease-bounce);
+    }
+    .wf-dialog[data-tone="tomato"] { --wf-edge: #F5D9DD; --wf-glow: #FDF2F4; --wf-strong: #DFA3AA; --wf-deep: #95656E; }
+    .wf-dialog[data-tone="peach"]  { --wf-edge: #F1E3BD; --wf-glow: #FFF7E3; --wf-strong: #E5C488; --wf-deep: #A98B4F; }
+    .wf-dialog[data-tone="cream"]  { --wf-edge: #D6EBDF; --wf-glow: #EFF8F3; --wf-strong: #8FC8AA; --wf-deep: #5E9E7C; }
+    .wf-dialog[data-tone="plain"]  { --wf-edge: #EEDFE2; --wf-glow: #FFFFFF; --wf-strong: #C9A9B0; --wf-deep: #8A7B7E; }
+    .wf-dialog-head { display: flex; align-items: center; gap: 8px; }
+    .wf-dialog-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 9px;
+      border: 1px solid var(--wf-edge);
+      border-radius: 999px;
+      background: var(--wf-glow);
+      color: var(--wf-deep);
+      font-size: 10.5px; font-weight: 700; letter-spacing: .05em;
+    }
+    .wf-dialog-platform { margin-left: auto; font-size: 10.5px; color: var(--sig-ink-soft); }
+    .wf-dialog-title { margin-top: 10px; font-size: 19px; font-weight: 800; color: var(--sig-ink); }
+    .wf-dialog-desc { margin-top: 6px; font-size: 13px; line-height: 1.7; color: var(--sig-ink-soft); }
+    .wf-dialog-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 18px; }
+    .wf-dialog-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--wf-edge);
+      border-radius: 999px;
+      background: var(--wf-glow);
+      color: var(--wf-deep);
+      font-size: 12.5px; font-weight: 700;
+      transition: transform .18s var(--sig-ease-bounce), border-color .18s ease;
+    }
+    .wf-dialog-btn:hover { border-color: var(--wf-strong); transform: translateY(-1px); }
+    .wf-dialog-close {
+      padding: 6px 12px;
+      border: 1px solid var(--sig-line);
+      border-radius: 999px;
+      background: #FFFFFF;
+      color: var(--sig-ink-soft);
+      font-size: 12px; font-weight: 600;
+      transition: transform .18s var(--sig-ease-bounce), border-color .18s ease;
+    }
+    .wf-dialog-close:hover { border-color: var(--sig-tomato); }
+    @keyframes wf-fade-in { from { opacity: 0; } }
+    @keyframes wf-pop { from { transform: scale(.94); opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      #wf-wrap .wf-root-glow { animation: none; }
+      #wf-wrap .wf-pill { transition: none; }
+      .wf-overlay, .wf-dialog { animation: none; }
+    }
+    /* ===== WORKS-GRAPH:END ===== */
+
     /* 聊天气泡：软糖异形圆角 */
     .sig-bubble {
       max-width: 82%;
@@ -798,44 +1007,96 @@
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">遇到不懂的事情，会忍不住多问一句为什么。</p>
       </div>
 
-      <!-- 04 个人作品集 -->
+      <!-- 04 作品集：知识图谱 -->
       <article class="rounded-3xl border border-primary/20 bg-primary/5 p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2 [animation-delay:140ms]">
         <div class="flex flex-wrap items-start justify-between gap-3">
-          <span class="sig-field">个人作品集</span>
-          <span class="rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary shadow-sm">欢迎试用</span>
+          <span class="sig-field">作品集 · 知识图谱</span>
+          <span class="rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary shadow-sm">点击分类折叠 · 点击作品看详情</span>
         </div>
-        <h2 class="sig-display mt-3 text-2xl leading-snug text-primary">个人主页 × 数字分身</h2>
-        <p class="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">我把自己的小主页做成了一个可以聊天的房间。希望你逛到这里时，能感到一点轻松。</p>
-        <div class="mt-3 flex flex-wrap gap-2">
-          <span class="sig-tag sig-tag-tomato">HTML / CSS</span>
-          <span class="sig-tag sig-tag-peach">JavaScript</span>
-          <span class="sig-tag sig-tag-cream">Bento UI</span>
-          <span class="sig-tag sig-tag-plain">AI 应用</span>
+        <div id="wf-wrap" class="mt-4" role="group" aria-label="何媛的作品知识图谱：4 个分类、8 个作品节点">
+          <svg id="wf-svg" role="img" aria-label="何媛的作品知识图谱，可拖动与缩放，点击分类折叠，点击作品查看详情"></svg>
+          <div id="wf-tip" class="wf-tip" role="tooltip"></div>
         </div>
-        <a href="https://github.com/xihongshi567" target="_blank" rel="noreferrer" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary transition-colors hover:text-primary/70">
-          想看看它怎么做的？去 GitHub
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-        </a>
       </article>
 
-      <!-- 05 实习经历示例 -->
+      <!-- 04b 作品卡 -->
+      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1">
+        <div class="flex items-center gap-2">
+          <span class="sig-tag sig-tag-cream">Kaggle</span>
+          <span class="sig-tag sig-tag-plain">×2</span>
+        </div>
+        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">模型微调实验</h3>
+        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：ARC-AGI 推理与模型微调，沉淀评测闭环。</p>
+        <div class="mt-2 flex flex-col gap-1">
+          <a href="https://www.kaggle.com/code/lelexihongshi/arc-agi-3-milestone-2-solution/" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">ARC-AGI 方案 →</a>
+          <a href="https://www.kaggle.com/code/lelexihongshi/notebookb36698d6b0" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">微调 notebook →</a>
+        </div>
+      </article>
+      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:60ms]">
+        <div class="flex items-center gap-2">
+          <span class="sig-tag sig-tag-plain">GitHub</span>
+          <span class="sig-tag sig-tag-tomato">Gitee</span>
+        </div>
+        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">写作 Agent</h3>
+        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：小说与技术类写作 Agent。</p>
+        <div class="mt-2 flex flex-col gap-1">
+          <a href="https://github.com/xihongshi567/novel-ai-agent-v2" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">小说写作 agent →</a>
+          <a href="https://gitee.com/he-xihongshi/modou" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">技术类写作 agent →</a>
+        </div>
+      </article>
+      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:120ms]">
+        <div class="flex items-center gap-2">
+          <span class="sig-tag sig-tag-tomato">Gitee</span>
+        </div>
+        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">电商售后 Chatbot</h3>
+        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：面向售后场景的对话机器人。</p>
+        <a href="https://gitee.com/he-xihongshi/tomotobot" target="_blank" rel="noreferrer" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">tomotobot →</a>
+      </article>
+      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:180ms]">
+        <div class="flex items-center gap-2">
+          <span class="sig-tag sig-tag-plain">GitHub</span>
+        </div>
+        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">MCP &amp; Skill</h3>
+        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：为 Agent 生态造的组件。</p>
+        <div class="mt-2 flex flex-col gap-1">
+          <a href="https://github.com/xihongshi567/modou-tools-mcp" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">情报收集 MCP →</a>
+          <a href="https://github.com/xihongshi567/agent-skill" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">技术选型 Skill →</a>
+        </div>
+      </article>
+      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:240ms]">
+        <div class="flex items-center gap-2">
+          <span class="sig-tag sig-tag-peach">魔塔</span>
+        </div>
+        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">魔塔个人主页</h3>
+        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：ModelScope 上的模型与创空间主页。</p>
+        <a href="https://www.modelscope.cn/profile/lelexihongshi" target="_blank" rel="noreferrer" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">去魔塔逛逛 →</a>
+      </article>
+
+      <!-- 05 实习经历 -->
       <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2">
         <div class="sig-experience-head">
           <span class="sig-field">实习经历</span>
-          <span class="sig-demo-badge">示例内容</span>
         </div>
         <div class="sig-experience-list">
           <article class="sig-experience-item">
-            <span class="sig-experience-date">2026.07 — 2026.09</span>
-            <h3 class="sig-experience-role">AI 产品实习生</h3>
-            <p class="sig-experience-company">某科技公司</p>
-            <p class="sig-experience-copy">参与 AI 功能调研与体验优化，把用户反馈整理成清晰的产品建议。</p>
+            <span class="sig-experience-date">2026.04 — 2026.08</span>
+            <h3 class="sig-experience-role">AI 应用实习生</h3>
+            <p class="sig-experience-company">四川爱迪沛霖数据信息技术有限公司</p>
+            <ul class="sig-experience-points">
+              <li>搭起医疗评测的「通用集 + 黄金基准集」闭环，沉淀 1500+ 条覆盖全场景的评测用例</li>
+              <li>用一致性 + 置信度双维度评分，归因 300+ 错例、迭代 15+ 版 prompt，把模型打分漂移压到可控</li>
+              <li>把批量推理 / 打分 / 失败重试 / 问题分级串成一条流水线，单批处理量 ×5、人工成本 -72%</li>
+            </ul>
           </article>
           <article class="sig-experience-item">
-            <span class="sig-experience-date">2025.12 — 2026.03</span>
-            <h3 class="sig-experience-role">数据分析实习生</h3>
-            <p class="sig-experience-company">某数据公司</p>
-            <p class="sig-experience-copy">协助完成数据整理与基础分析，让业务信息更直观、更容易使用。</p>
+            <span class="sig-experience-date">2026.09 — 至今</span>
+            <h3 class="sig-experience-role">AI 数据实习生</h3>
+            <p class="sig-experience-company">深圳乐木骆科技有限公司</p>
+            <ul class="sig-experience-points">
+              <li>给喂食器场景的猫咪检测搭了「自动预标注 + 人工校验」的人机协同流水线</li>
+              <li>让设备抓拍图自动框猫、数数量，打通采集 / 清洗 / 标注 / 训练的数据闭环</li>
+              <li>把猫检测计数数据集的生产效率拉起来，人工标注成本明显降下来</li>
+            </ul>
           </article>
         </div>
       </div>
@@ -883,7 +1144,7 @@
       var MAIL = '3432419466@qq.com';
       var KB = [
         { keys: ['联系', '邮箱', '邮件', '微信', 'qq', '沟通', '找到'], a: '最靠谱的方式是邮箱：3432419466@qq.com，点页面右上角或头像下方的按钮就能一键复制。无论是面试邀约还是合作想法，都欢迎邮件和何媛聊聊～' },
-        { keys: ['作品', '项目', '主页', '做过什么'], a: '何媛正在整理她的作品集，这个个人主页就是最新的一件——从设计到搭建独立完成。她关注 AI 应用方向，喜欢把 AI 工具真正用进生活和工作里，作品集整理好之后会第一时间更新上来！' },
+        { keys: ['作品', '项目', '主页', '做过什么'], a: '何媛的作品都在主页的「作品集 · 知识图谱」里：模型微调（Kaggle）、写作 Agent、电商售后 Chatbot、情报收集 MCP 与 Agent 技术选型 Skill，还有 vibecoding 做的小工具们。她关注 AI 应用方向，喜欢把 AI 工具真正用进生活和工作里。' },
         { keys: ['技能', '擅长', '能力', '会什么', '方向'], a: '她最关心两个方向：AI 应用（让 AI 给生活赋能）和知识整理（把散落的信息变成能用的知识）。作为 27 届应届生，她正在秋招阶段，也在持续学习新技能。' },
         { keys: ['身份', '应届', '届', '秋招', '学校', '专业', '求职', '在做什么', '最近'], a: '何媛本科就读于成都理工大学（双一流），专业是大数据管理与应用，是 27 届应届生。她现在正处于秋招阶段，也在持续整理作品集、搭建这个个人主页。' },
         { keys: ['兴趣', '爱好', '喜欢', '太极', '阅读', '旅行', '看书'], a: '她的兴趣一动一静：用 AI 给生活赋能、阅读、旅行，还有打太极。要说共同点，大概都属于「求知求学」的一部分吧。' },
@@ -1102,6 +1363,467 @@
           likeButton.title = '点赞失败，请稍后再试';
         });
       });
+    })();
+  </script>
+
+  <!-- ===== 作品宇宙知识图谱：vanilla + D3 v7（CDN），力导向 + foreignObject HTML 药丸 ===== -->
+  <script type="module">
+    import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
+
+    (function () {
+      var wrap = document.getElementById('wf-wrap');
+      if (!wrap) return;
+      var svgEl = document.getElementById('wf-svg');
+      var tipEl = document.getElementById('wf-tip');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      var hoverable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      /* ===== 数据：4 分类 × 8 作品（与聊天知识库同一套作品） ===== */
+      var WORK_CLUSTERS = [
+        { id: 'kaggle', tone: 'tomato', shortTitle: 'Kaggle', title: 'Kaggle 竞赛 · 模型微调',
+          works: [
+            { title: 'ARC-AGI-3 推理评测', platform: 'Kaggle', status: 'done', url: 'https://www.kaggle.com/code/lelexihongshi/arc-agi-3-milestone-2-solution/',
+              desc: 'ARC Prize 2026 参赛 notebook：复现并改装 Tufa Labs 开源夺冠求解器 Duck，量化版 Qwen3.8-Flash-Next + SGLang 推理服务化，完成 25 个 demo 游戏的全量 rerun。' }
+          ] },
+        { id: 'agent', tone: 'peach', shortTitle: 'Agent', title: 'Agent 项目',
+          works: [
+            { title: '小说写作 Agent', platform: 'GitHub', status: 'done', url: 'https://github.com/xihongshi567/novel-ai-agent-v2',
+              desc: '用 Agent 工作流辅助小说创作，覆盖选题、大纲、章节生成与风格把控等写作环节。' },
+            { title: '技术写作 Agent', platform: 'Gitee', status: 'done', url: 'https://gitee.com/he-xihongshi/modou',
+              desc: '面向技术内容的写作 Agent，辅助完成技术文章的选题、组织与撰写。' },
+            { title: '电商售后 Chatbot', platform: 'Gitee', status: 'done', url: 'https://gitee.com/he-xihongshi/tomotobot',
+              desc: '电商售后场景的智能客服 Chatbot，处理售后咨询与客诉等常见场景。' }
+          ] },
+        { id: 'vibecoding', tone: 'plain', shortTitle: 'Vibecoding', title: 'Vibecoding 小工具',
+          works: [
+            { title: '个人主页 × 数字分身', platform: 'GitHub', status: 'done', url: 'https://github.com/xihongshi567/myhomepage',
+              desc: '从设计到代码独立完成的单页应用，内置大模型驱动的数字分身。' },
+            { title: '更多小工具 · 整理中', platform: '', status: 'building', url: '',
+              desc: '正在整理中的小工具们，完成一个补一个～' }
+          ] },
+        { id: 'mcp-skill', tone: 'cream', shortTitle: 'MCP & Skill', title: 'MCP 与 Skill',
+          works: [
+            { title: '情报收集 MCP', platform: 'GitHub', status: 'done', url: 'https://github.com/xihongshi567/modou-tools-mcp',
+              desc: '多平台情报收集 MCP，通过统一接口让 AI 调研小红书、推特、B站、Reddit、GitHub 等平台内容。' },
+            { title: 'Agent 选型 Skill', platform: 'GitHub', status: 'done', url: 'https://github.com/xihongshi567/agent-skill',
+              desc: 'Agent 架构选型顾问 Skill，逐步问答收敛到推荐架构并给出理由、成本风险提醒与最小验证实验。' }
+          ] }
+      ];
+
+      var clamp = function (min, v, max) { return Math.min(max, Math.max(min, v)); };
+      var PI = Math.PI;
+
+      var state = { collapsed: new Set(), transform: null, fitted: false };
+      var sim, nodeG, linkG, defsSel, gSel, zoomBehavior, nodes, links, W, H;
+      var lastWidth = wrap.clientWidth;
+      var ro = null, rebuildTimer = null;
+
+      function geometry(canvasW) {
+        /* 星型布局直径由药丸宽度决定，画布比例尽量接近方形以减少 fit 缩字 */
+        H = clamp(340, canvasW * 0.78, 560);
+        W = canvasW;
+        /* 参数以 H=560 为基准，随画布高度归一收缩，避免窄容器下 fit 缩字过小 */
+        var s = H / 560;
+        return {
+          catDist: clamp(120 * s, 88, 175),
+          leafDist: clamp(95 * s, 70, 135),
+          charge: -80 * s * s,
+          collidePad: 8
+        };
+      }
+
+      function makeNodes() {
+        var ns = [{ id: 'root', type: 'root', x: 0, y: 0, width: 0, height: 0 }];
+        var ls = [];
+        WORK_CLUSTERS.forEach(function (c, i) {
+          var theta = PI / 180 * (-90 + i * 90 - 22.5);
+          var catId = 'cat-' + c.id;
+          ns.push({ id: catId, type: 'cat', clusterId: c.id, tone: c.tone, title: c.title, short: c.shortTitle, theta: theta, x: 0, y: 0, width: 0, height: 0 });
+          ls.push({ id: catId + '-root', source: catId, target: 'root', ltype: 'root-cat', clusterId: c.id, tone: c.tone });
+          c.works.forEach(function (w, j) {
+            var id = 'leaf-' + c.id + '-' + j;
+            ns.push({ id: id, type: 'leaf', clusterId: c.id, tone: c.tone, work: w, leafIndex: j, leafCount: c.works.length, x: 0, y: 0, width: 0, height: 0 });
+            ls.push({ id: catId + '-' + j, source: catId, target: id, ltype: 'cat-leaf', clusterId: c.id, tone: c.tone, status: w.status });
+          });
+        });
+        return { ns: ns, ls: ls };
+      }
+
+      var nodeById = {};
+
+      function linkPath(l) {
+        var s = typeof l.source === 'string' ? nodeById[l.source] : l.source;
+        var t = typeof l.target === 'string' ? nodeById[l.target] : l.target;
+        var sx = s.x, sy = s.y, tx = t.x, ty = t.y;
+        var dx = tx - sx, dy = ty - sy, dist = Math.hypot(dx, dy) || 1;
+        if (l.ltype === 'root-cat') {
+          var bend = Math.min(24, dist * 0.18);
+          var qx = (sx + tx) / 2 - dy / dist * bend;
+          var qy = (sy + ty) / 2 + dx / dist * bend;
+          return 'M' + sx + ',' + sy + ' Q' + qx + ',' + qy + ' ' + tx + ',' + ty;
+        }
+        /* cat-leaf：圆弧，朝远离根的方向弓出 */
+        var r = dist * 0.55;
+        var mx = (sx + tx) / 2, my = (sy + ty) / 2;
+        var root = nodeById['root'];
+        var cross = dx * (root.y - my) - dy * (root.x - mx);
+        var sweep = cross > 0 ? 1 : 0;
+        return 'M' + sx + ',' + sy + ' A' + r + ',' + r + ' 0 0 ' + sweep + ' ' + tx + ',' + ty;
+      }
+
+      function pillHTML(d) {
+        if (d.type === 'root') {
+          return '<div class="wf-root"><div class="wf-root-glow"></div><div class="wf-root-core"><span class="wf-root-name">何媛</span><span class="wf-root-sub">× AI 应用</span></div></div>';
+        }
+        if (d.type === 'cat') {
+          return '<div class="wf-pill wf-pill-cat"><span>' + d.short + '</span><svg class="wf-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>';
+        }
+        var building = d.work.status === 'building';
+        return '<div class="wf-pill wf-pill-leaf' + (building ? ' wf-pill-building' : '') + '"><span>' + d.work.title + '</span></div>';
+      }
+
+      function ticked() {
+        nodeG.attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+        linkG.select('path.wf-link').attr('d', linkPath);
+        defsSel.attr('d', linkPath);
+      }
+
+      function build() {
+        var geo = geometry(wrap.clientWidth);
+        wrap.style.height = H + 'px';
+        svgEl.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+        svgEl.setAttribute('width', W);
+        svgEl.setAttribute('height', H);
+
+        var made = makeNodes();
+        nodes = made.ns;
+        links = made.ls;
+        nodeById = {};
+        nodes.forEach(function (n) { nodeById[n.id] = n; });
+
+        /* 初始极坐标布点：根锁中，分类四象限均分偏 22.5°，叶子朝父分类外展开 */
+        nodes.forEach(function (n) {
+          if (n.type === 'root') { n.x = W / 2; n.y = H / 2; return; }
+          if (n.type === 'cat') {
+            n.x = W / 2 + geo.catDist * Math.cos(n.theta);
+            n.y = H / 2 + geo.catDist * Math.sin(n.theta);
+          }
+        });
+        nodes.forEach(function (n) {
+          if (n.type !== 'leaf') return;
+          var cat = nodeById['cat-' + n.clusterId];
+          var t = cat.theta + PI + (n.leafIndex - (n.leafCount - 1) / 2) * 0.6;
+          n.x = cat.x + geo.leafDist * Math.cos(t);
+          n.y = cat.y + geo.leafDist * Math.sin(t);
+        });
+
+        var svg = d3.select(svgEl);
+        svg.selectAll('*').remove();
+        var defs = svg.append('defs');
+        gSel = svg.append('g').attr('class', 'wf-g');
+
+        linkG = gSel.selectAll('g.wf-linkg').data(links).join('g')
+          .attr('class', function (d) { return 'wf-linkg ' + (d.ltype === 'cat-leaf' ? 'wf-leaf-link' : 'wf-root-link'); })
+          .attr('data-tone', function (d) { return d.tone || ''; });
+        linkG.append('path')
+          .attr('class', function (d) { return 'wf-link' + (d.ltype === 'cat-leaf' ? ' wf-link-leaf' : ''); })
+          .attr('d', linkPath);
+        defsSel = defs.selectAll('path.wf-def').data(links).join('path')
+          .attr('id', function (d) { return 'wf-def-' + d.id; })
+          .attr('d', linkPath);
+
+        /* 流动光点：animateMotion 沿克隆路径，免 JS 逐帧驱动 */
+        if (!reduceMotion && !coarsePointer) {
+          linkG.each(function (d) {
+            d3.select(this).append('circle')
+              .attr('class', 'wf-dot')
+              .attr('r', d.ltype === 'root-cat' ? 2.4 : 1.7)
+              .append('animateMotion')
+              .attr('dur', (d.ltype === 'root-cat' ? 4.6 : 3.4) + 's')
+              .attr('begin', (Math.random() * 3).toFixed(2) + 's')
+              .attr('repeatCount', 'indefinite')
+              .append('mpath')
+              .attr('href', '#wf-def-' + d.id);
+          });
+        }
+
+        nodeG = gSel.selectAll('g.wf-node').data(nodes).join('g')
+          .attr('class', function (d) { return 'wf-node wf-node-' + d.type; })
+          .attr('data-tone', function (d) { return d.tone || ''; })
+          .attr('data-cluster', function (d) { return d.clusterId || 'root'; })
+          .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+        nodeG.append('title').text(function (d) {
+          if (d.type === 'root') return '何媛的作品知识图谱';
+          if (d.type === 'cat') return d.title + '，点击折叠或展开';
+          return d.work.title + (d.work.status === 'done' ? '，点击查看详情' : '，整理中');
+        });
+        nodeG.append('foreignObject')
+          .attr('width', 140).attr('height', 44).attr('x', -70).attr('y', -22)
+          .append('xhtml:div').html(pillHTML);
+
+        /* 实测药丸尺寸 → 反写宽高（驱动 collide 防重叠与 fit 居中） */
+        nodeG.each(function (d) {
+          var pill = this.querySelector('.wf-pill, .wf-root');
+          d.width = pill.offsetWidth;
+          d.height = pill.offsetHeight;
+          d3.select(this).select('foreignObject')
+            .attr('width', d.width).attr('height', d.height)
+            .attr('x', -d.width / 2).attr('y', -d.height / 2);
+        });
+
+        /* 力导向仿真 */
+        sim = d3.forceSimulation(nodes)
+          .force('link', d3.forceLink(links).id(function (d) { return d.id; })
+            .distance(function (l) { return l.ltype === 'root-cat' ? geo.catDist : geo.leafDist; })
+            .strength(function (l) { return l.ltype === 'root-cat' ? 1 : 0.85; }))
+          .force('charge', d3.forceManyBody().strength(geo.charge))
+          .force('center', d3.forceCenter(W / 2, H / 2))
+          .force('collide', d3.forceCollide().radius(function (d) { return Math.max(d.width || 40, d.height || 40) / 2 + geo.collidePad; }))
+          .force('x', d3.forceX(W / 2).strength(0.12))
+          .force('y', d3.forceY(H / 2).strength(0.12))
+          .alphaDecay(0.05)
+          .on('tick', ticked)
+          .on('end', maybeFit);
+        var fallback = setTimeout(maybeFit, 2600);
+
+        /* 缩放平移：滚轮仅 Ctrl+滚轮缩放，避免抢占页面滚动；禁双击缩放（保护 tap 折叠） */
+        zoomBehavior = d3.zoom()
+          .scaleExtent([0.5, 2.2])
+          .extent([[0, 0], [W, H]])
+          .filter(function (event) {
+            if (event.type === 'wheel') return event.ctrlKey;
+            if (event.type === 'dblclick') return false;
+            if (event.type === 'mousedown') return event.button === 0;
+            return true;
+          });
+        svg.call(zoomBehavior);
+        /* zoom 事件走 d3-zoom 内部 dispatch，须注册在 behavior 上（selection.on 无效） */
+        zoomBehavior.on('zoom', function (event) {
+          state.transform = event.transform;
+          gSel.attr('transform', event.transform);
+        });
+        /* 单指上下滑留给页面滚动；节点自身 touch-action none 保证拖拽与 tap 灵敏 */
+        svg.style('touch-action', 'pan-y');
+
+        /* 拖拽：位移 >5px 才算拖（之后 click 被抑制），tap 仍触发折叠 / 开卡 */
+        var dragBehavior = d3.drag()
+          .clickDistance(5)
+          .filter(function (event) { return event.type === 'touchstart' || event.button === 0; })
+          .on('start', function (event, d) {
+            if (d.type === 'root') return;
+            sim.alphaTarget(0.25).restart();
+            d.fx = d.x; d.fy = d.y;
+          })
+          .on('drag', function (event, d) { d.fx = event.x; d.fy = event.y; })
+          .on('end', function (event, d) {
+            if (event.active === 0) sim.alphaTarget(0);
+            d.fx = null; d.fy = null;
+          });
+        nodeG.filter(function (d) { return d.type !== 'root'; }).call(dragBehavior);
+
+        /* 点击：分类折叠 / 叶子（done）开详情卡 */
+        nodeG.filter(function (d) { return d.type === 'cat'; }).on('click', function (event, d) {
+          if (event.defaultPrevented) return;
+          toggleCluster(d.clusterId);
+        });
+        nodeG.filter(function (d) { return d.type === 'leaf'; }).on('click', function (event, d) {
+          if (event.defaultPrevented) return;
+          if (d.work.status === 'done') openCard(d);
+        });
+
+        /* hover：分类聚焦（连线亮主题色、其余虚化）+ 工具提示（同一事件内处理，避免 d3 on 互相覆盖） */
+        if (hoverable) {
+          nodeG.on('mouseenter', function (event, d) {
+            if (d.type === 'cat') focusCluster(d.clusterId);
+            showTip(event, d);
+          });
+          nodeG.on('mousemove', positionTip);
+          nodeG.on('mouseleave', function (event, d) {
+            if (d.type === 'cat') focusCluster(null);
+            hideTip();
+          });
+        }
+
+        applyVisibility();
+        state.fitted = false;
+        state.transform = null;
+      }
+
+      /* 仿真稳定后自动居中（fit）；2600ms 兜底防 end 不触发 */
+      function maybeFit() {
+        if (state.fitted) return;
+        state.fitted = true;
+        var t = fitTransform();
+        if (t) applyTransform(t, reduceMotion ? 0 : 650);
+      }
+
+      function fitTransform() {
+        var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        nodes.forEach(function (n) {
+          if (n.type === 'leaf' && state.collapsed.has(n.clusterId)) return;
+          x0 = Math.min(x0, n.x - n.width / 2);
+          x1 = Math.max(x1, n.x + n.width / 2);
+          y0 = Math.min(y0, n.y - n.height / 2);
+          y1 = Math.max(y1, n.y + n.height / 2);
+        });
+        if (!isFinite(x0)) return null;
+        var bw = x1 - x0, bh = y1 - y0;
+        var k = Math.min(1.15, 0.9 / Math.max(bw / W, bh / H));
+        return d3.zoomIdentity
+          .translate((W - bw * k) / 2 - x0 * k, (H - bh * k) / 2 - y0 * k)
+          .scale(k);
+      }
+
+      /* 650ms easeCubicOut 过渡（RAF 手写，不引 d3-transition） */
+      function applyTransform(target, dur) {
+        state.transform = target;
+        var svgSel = d3.select(svgEl);
+        if (dur <= 0) { svgSel.call(zoomBehavior.transform, target); return; }
+        var from = d3.zoomTransform(svgEl);
+        var t0 = performance.now();
+        var ease = function (x) { return 1 - Math.pow(1 - x, 3); };
+        var frame = function (now) {
+          var p = Math.min(1, (now - t0) / dur);
+          var e = ease(p);
+          var t = d3.zoomIdentity
+            .translate(from.x + (target.x - from.x) * e, from.y + (target.y - from.y) * e)
+            .scale(from.k + (target.k - from.k) * e);
+          svgSel.call(zoomBehavior.transform, t);
+          if (p < 1) requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+      }
+
+      function toggleCluster(cid) {
+        if (state.collapsed.has(cid)) state.collapsed.delete(cid);
+        else state.collapsed.add(cid);
+        applyVisibility();
+        sim.alpha(0.3).restart();
+      }
+
+      function applyVisibility() {
+        nodeG.classed('wf-hidden', function (d) { return d.type === 'leaf' && state.collapsed.has(d.clusterId); });
+        linkG.classed('wf-hidden', function (d) { return d.ltype === 'cat-leaf' && state.collapsed.has(d.clusterId); });
+        nodeG.classed('wf-collapsed', function (d) { return d.type === 'cat' && state.collapsed.has(d.clusterId); });
+      }
+
+      function focusCluster(cid) {
+        nodeG.classed('wf-dim', function (d) { return d.type !== 'root' && (cid === null || d.clusterId !== cid); });
+        linkG.classed('wf-bold', function (d) { return cid !== null && d.clusterId === cid; });
+        linkG.classed('wf-dim', function (d) { return cid !== null && d.clusterId !== cid; });
+      }
+
+      function showTip(event, d) {
+        tipEl.innerHTML = '';
+        var b = document.createElement('b');
+        var s = document.createElement('span');
+        if (d.type === 'leaf') {
+          b.textContent = d.work.title;
+          s.textContent = d.work.status === 'done'
+            ? (d.work.platform + ' · 点击查看详情')
+            : '整理中 · 敬请期待';
+        } else if (d.type === 'cat') {
+          b.textContent = d.title;
+          s.textContent = '点击折叠 / 展开';
+        } else {
+          b.textContent = '何媛的作品宇宙';
+          s.textContent = '拖动 · 缩放 · 点击探索';
+        }
+        tipEl.appendChild(b);
+        tipEl.appendChild(s);
+        tipEl.classList.add('is-show');
+        positionTip(event);
+      }
+
+      function positionTip(event) {
+        var r = wrap.getBoundingClientRect();
+        var left = event.clientX - r.left + 14;
+        var top = event.clientY - r.top - tipEl.offsetHeight - 10;
+        if (top < 0) top = event.clientY - r.top + 16;
+        tipEl.style.left = Math.max(4, Math.min(left, r.width - tipEl.offsetWidth - 10)) + 'px';
+        tipEl.style.top = Math.max(2, top) + 'px';
+      }
+
+      function hideTip() { tipEl.classList.remove('is-show'); }
+
+      function openCard(d) {
+        var c = null;
+        for (var i = 0; i < WORK_CLUSTERS.length; i++) {
+          if (WORK_CLUSTERS[i].id === d.clusterId) { c = WORK_CLUSTERS[i]; break; }
+        }
+        var overlay = document.createElement('div');
+        overlay.className = 'wf-overlay';
+        var card = document.createElement('div');
+        card.className = 'wf-dialog';
+        card.setAttribute('role', 'dialog');
+        card.setAttribute('aria-modal', 'true');
+        card.setAttribute('aria-label', d.work.title);
+        card.dataset.tone = d.tone;
+        var head = document.createElement('div');
+        head.className = 'wf-dialog-head';
+        var badge = document.createElement('span');
+        badge.className = 'wf-dialog-badge';
+        badge.textContent = c.shortTitle;
+        var platform = document.createElement('span');
+        platform.className = 'wf-dialog-platform';
+        platform.textContent = d.work.platform || '';
+        head.appendChild(badge);
+        head.appendChild(platform);
+        var title = document.createElement('h3');
+        title.className = 'wf-dialog-title';
+        title.textContent = d.work.title;
+        var desc = document.createElement('p');
+        desc.className = 'wf-dialog-desc';
+        desc.textContent = d.work.desc;
+        var actions = document.createElement('div');
+        actions.className = 'wf-dialog-actions';
+        var btn = document.createElement('a');
+        btn.className = 'wf-dialog-btn';
+        btn.href = d.work.url;
+        btn.target = '_blank';
+        btn.rel = 'noreferrer';
+        btn.textContent = '前往平台 →';
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'wf-dialog-close';
+        closeBtn.textContent = '关闭';
+        actions.appendChild(btn);
+        actions.appendChild(closeBtn);
+        card.appendChild(head);
+        card.appendChild(title);
+        card.appendChild(desc);
+        card.appendChild(actions);
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
+        var esc = null;
+        var close = function () {
+          document.removeEventListener('keydown', esc);
+          overlay.remove();
+        };
+        esc = function (e) { if (e.key === 'Escape') close(); };
+        document.addEventListener('keydown', esc);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+        closeBtn.addEventListener('click', close);
+        closeBtn.focus();
+      }
+
+      /* 容器宽度变化 >40px → 重建（折叠状态保留，视角重新 fit），220ms 防抖 */
+      function scheduleRebuild() {
+        clearTimeout(rebuildTimer);
+        rebuildTimer = setTimeout(function () {
+          if (Math.abs(wrap.clientWidth - lastWidth) > 40) {
+            lastWidth = wrap.clientWidth;
+            build();
+          }
+        }, 220);
+      }
+      if (typeof ResizeObserver !== 'undefined') {
+        ro = new ResizeObserver(scheduleRebuild);
+        ro.observe(wrap);
+      }
+
+      build();
     })();
   </script>
 </body>

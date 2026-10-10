@@ -9,3 +9,6 @@ data/likes.json
 
 # IDE
 .idea/
+
+# Browser test artifacts (Playwright MCP)
+.playwright-mcp/

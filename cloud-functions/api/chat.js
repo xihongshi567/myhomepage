@@ -29,7 +29,7 @@ function checkRate(key, limit, windowMs) {
 function fallbackAnswer(text) {
   const t = text.toLowerCase();
   if (/(联系|邮箱|邮件|微信|qq)/.test(t)) return '最靠谱的方式是邮箱：3432419466@qq.com，欢迎来信和何媛聊聊！';
-  if (/(作品|项目|主页|做过什么)/.test(t)) return '何媛正在整理作品集，这个个人主页就是最新的一份：从设计到搭建独立完成。她关注 AI 应用方向。';
+  if (/(作品|项目|主页|做过什么)/.test(t)) return '何媛的作品都在主页的「作品集 · 知识图谱」里：模型微调（Kaggle）、写作 Agent、电商售后 Chatbot、情报收集 MCP 与 Agent 技术选型 Skill，还有 vibecoding 做的小工具们。她关注 AI 应用方向。';
   if (/(技能|擅长|能力|会什么|方向)/.test(t)) return '她最关心两个方向：AI 应用（让 AI 给生活赋能）和知识整理（把散落的信息变成能用的知识）。';
   if (/(身份|应届|届|秋招|学校|专业|求职|在做什么|最近)/.test(t)) return '何媛本科就读于成都理工大学（双一流），专业是大数据管理与应用，是 27 届应届生。';
   if (/(兴趣|爱好|喜欢|太极|阅读|旅行|看书)/.test(t)) return '她的兴趣一动一静：用 AI 给生活赋能、阅读、旅行，还有打太极。';
