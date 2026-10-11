@@ -19,11 +19,11 @@ test('serves the homepage and image asset from the project root', async () => {
     assert.match(html, /把好奇心变成一点点有用的东西。/);
     assert.match(html, /教育背景/);
     assert.match(html, /成都理工大学（双一流）/);
-    assert.match(html, /本科 · 大数据管理与应用/);
+    assert.match(html, /aria-label="教育背景：成都理工大学 · 大数据管理与应用 · 双一流 · 本科"/);
     assert.doesNotMatch(html, /大数据管理与应用专业 · 27 届应届生/);
-    assert.match(html, /成都理工大学\s*<span class="sig-edu-badge">双一流<\/span>/);
-    assert.match(html, /\.sig-edu-badge\s*\{/);
-    assert.match(html, /\.sig-school-line\s*\{[\s\S]*?white-space:\s*nowrap;/);
+    assert.match(html, /<span class="sig-tag sig-tag-cream">大数据管理与应用<\/span>/);
+    assert.match(html, /<span class="sig-tag sig-tag-peach">本科<\/span>/);
+    assert.match(html, /\.sig-tag-plain\s*\{/);
     assert.doesNotMatch(html, /最近在忙/);
     assert.match(html, /实习经历/);
     assert.match(html, /四川爱迪沛霖数据信息技术有限公司/);
@@ -49,7 +49,9 @@ test('serves the homepage and image asset from the project root', async () => {
     assert.match(html, /modou-tools-mcp/);
     assert.match(html, /agent-skill/);
     assert.match(html, /tomotobot/);
-    assert.match(html, /modelscope\.cn\/profile\/lelexihongshi/);
+    assert.match(html, /https:\/\/github\.com\/xihongshi567/);
+    assert.match(html, /https:\/\/gitee\.com\/he-xihongshi/);
+    assert.doesNotMatch(html, /modelscope\.cn\/profile\/lelexihongshi/);
     assert.doesNotMatch(html, /@font-face|QianTuXiaoTu|ResourceHanRoundedCN|resource-static\.bj\.bcebos\.com/);
     assert.match(html, /\.sig-display\s*\{\s*font-family:\s*inherit;/);
     assert.doesNotMatch(html, /#FFB84C|#FFF1D9|#8A5A17/);
@@ -68,7 +70,7 @@ test('serves the homepage and image asset from the project root', async () => {
     assert.match(html, /fetch\('\/api\/likes'/);
     assert.match(html, /#bento\s*>\s*:nth-child\(3\)/);
     assert.match(html, /@media\s*\(max-width:\s*767px\)/);
-    assert.match(html, /#bento\s*>\s*:nth-child\(5\)\s*\{\s*order:\s*2;/);
+    assert.match(html, /#bento\s*>\s*:nth-child\(3\)\s*\{\s*order:\s*2;/);
     assert.match(html, /id="pet-button"/);
     assert.match(html, /class="sig-pixel-robot/);
     assert.match(html, /id="chat-close"/);
