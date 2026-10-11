@@ -154,27 +154,6 @@
       box-shadow: 0 0 0 1px var(--sig-line);
       flex-shrink: 0;
     }
-    .sig-edu-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 7px;
-      border: 1px solid #D6EBDF;
-      border-radius: 999px;
-      color: var(--sig-ink-soft);
-      background: var(--sig-mint);
-      font-size: 10px;
-      font-weight: 600;
-      line-height: 1;
-      vertical-align: middle;
-    }
-    .sig-school-line {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      font-size: 16px;
-      letter-spacing: -0.02em;
-    }
     .sig-experience-head {
       display: flex;
       align-items: center;
@@ -498,6 +477,44 @@
     .sig-tag-cream { background: var(--sig-mint); color: var(--sig-ink-soft); border: 1px solid #D6EBDF; }
     .sig-tag-plain { background: #FFFFFF; color: var(--sig-ink-soft); border: 1px solid var(--sig-line); }
 
+    /* 兴趣便签：彩色图标章 + 一句话描述 */
+    .sig-hobby {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 14px;
+      border: 1px solid var(--sig-line);
+      border-radius: 16px 20px 15px 18px;
+      background: rgba(255, 255, 255, .72);
+      transition: transform .2s var(--sig-ease-bounce), border-color .2s ease;
+    }
+    .sig-hobby:nth-child(2n) { border-radius: 20px 16px 18px 15px; }
+    .sig-hobby:hover { transform: translateY(-2px); border-color: var(--sig-tomato); }
+    .sig-hobby-icon {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+    }
+    .sig-hobby-tomato .sig-hobby-icon { background: var(--sig-tomato-soft); color: var(--sig-tomato-deep); border: 1px solid #F5D9DD; }
+    .sig-hobby-peach .sig-hobby-icon { background: var(--sig-butter); color: var(--sig-ink-soft); border: 1px solid #F1E3BD; }
+    .sig-hobby-cream .sig-hobby-icon { background: var(--sig-mint); color: var(--sig-ink-soft); border: 1px solid #D6EBDF; }
+    .sig-hobby-plain .sig-hobby-icon { background: #FFFFFF; color: var(--sig-ink-soft); border: 1px solid var(--sig-line); }
+    .sig-hobby-title {
+      color: var(--sig-ink);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .sig-hobby-desc {
+      margin-top: 1px;
+      color: var(--sig-ink-soft);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
     /* 在线状态点 */
     .sig-online { background: var(--sig-online); }
 
@@ -643,11 +660,9 @@
     }
     #bento > :nth-child(1) { border-radius: 30px 42px 34px 46px; }
     #bento > :nth-child(2) { border-radius: 38px 30px 44px 32px; }
-    #bento > :nth-child(3) { border-radius: 28px 36px 30px 24px; background: var(--sig-butter); }
-    #bento > :nth-child(4) { border-radius: 34px 24px 38px 30px; background: var(--sig-tomato-soft); }
-    #bento > :nth-child(5) { border-radius: 40px 28px 36px 30px; background: linear-gradient(145deg, #FFFDF9, var(--sig-lilac)); }
-    #bento > :nth-child(6) { border-radius: 26px 38px 30px 42px; background: var(--sig-sky); }
-    #bento > :nth-child(7) { border-radius: 30px 40px 26px 36px; background: var(--sig-mint); }
+    #bento > :nth-child(3) { border-radius: 40px 28px 36px 30px; background: linear-gradient(145deg, #FFFDF9, var(--sig-lilac)); }
+    #bento > :nth-child(4) { border-radius: 26px 38px 30px 42px; background: var(--sig-sky); }
+    #bento > :nth-child(5) { border-radius: 30px 40px 26px 36px; background: var(--sig-mint); }
     .sig-pet-button,
     .sig-chat-backdrop,
     .sig-chat-close { display: none; }
@@ -770,12 +785,11 @@
       }
       #copy-mail-hero { margin-top: 14px; }
       #copy-mail-hero + div { margin-top: 12px; }
-      #bento > :nth-child(5) {
+      #bento > :nth-child(3) {
         order: 2;
         padding: 24px 22px;
         border-radius: 28px 34px 30px 26px;
       }
-      #bento > :nth-child(5) h2 { font-size: 23px; line-height: 1.4; }
       body.sig-chat-open { overflow: hidden; }
       body.sig-chat-open main { z-index: auto; }
       .sig-chat-card {
@@ -879,14 +893,8 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-5px); }
       }
-      #bento > :nth-child(6) { order: 4; margin-top: 12px; }
-      #bento > :nth-child(3) { order: 5; }
-      #bento > :nth-child(4) { order: 6; }
-      #bento > :nth-child(7) { order: 7; }
-      #bento > :nth-child(3),
-      #bento > :nth-child(4),
-      #bento > :nth-child(6),
-      #bento > :nth-child(7) { padding: 22px; }
+      #bento > :nth-child(4) { order: 3; }
+      #bento > :nth-child(5) { order: 4; }
       .sig-experience-list { grid-template-columns: 1fr; gap: 10px; }
       .sig-experience-item { padding: 15px 16px; }
     }
@@ -960,10 +968,16 @@
             <span id="like-count" class="sig-num" aria-live="polite">0</span>
           </button>
         </div>
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-1.5" aria-label="教育背景：成都理工大学 · 大数据管理与应用 · 双一流 · 本科">
+          <span class="sig-tag sig-tag-plain">成都理工大学</span>
+          <span class="sig-tag sig-tag-cream">大数据管理与应用</span>
+          <span class="sig-tag sig-tag-tomato">双一流</span>
+          <span class="sig-tag sig-tag-peach">本科</span>
+        </div>
       </div>
 
       <!-- 数字分身聊天大格：右侧通栏 -->
-      <div id="chat" class="sig-chat-card flex flex-col overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-xl shadow-primary/10 animate-bento-in [animation-delay:120ms] md:order-none md:col-span-2 md:row-span-6">
+      <div id="chat" class="sig-chat-card flex flex-col overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-xl shadow-primary/10 animate-bento-in [animation-delay:120ms] md:order-none md:col-span-2 md:row-span-5">
         <div class="flex shrink-0 items-center gap-3 border-b border-primary/10 bg-primary/5 px-5 py-4">
           <span class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground">媛<span class="sig-online absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card"></span></span>
           <div class="min-w-0 flex-1">
@@ -993,21 +1007,7 @@
         </form>
       </div>
 
-      <!-- 02 教育背景 -->
-      <div class="rounded-3xl border border-border bg-secondary p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1">
-          <span class="sig-field">教育背景</span>
-        <p class="sig-school-line mt-2.5 font-bold leading-snug">成都理工大学 <span class="sig-edu-badge">双一流</span></p>
-        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">本科 · 大数据管理与应用</p>
-      </div>
-
-      <!-- 03 记忆点 -->
-      <div class="rounded-3xl border border-primary/25 bg-primary/5 p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:80ms]">
-        <span class="sig-field">我的小习惯</span>
-        <p class="mt-2.5 text-lg font-bold leading-snug text-primary">先好奇，再出发</p>
-        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">遇到不懂的事情，会忍不住多问一句为什么。</p>
-      </div>
-
-      <!-- 04 作品集：知识图谱 -->
+      <!-- 02 作品集：知识图谱 -->
       <article class="rounded-3xl border border-primary/20 bg-primary/5 p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2 [animation-delay:140ms]">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <span class="sig-field">作品集 · 知识图谱</span>
@@ -1019,60 +1019,7 @@
         </div>
       </article>
 
-      <!-- 04b 作品卡 -->
-      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1">
-        <div class="flex items-center gap-2">
-          <span class="sig-tag sig-tag-cream">Kaggle</span>
-          <span class="sig-tag sig-tag-plain">×2</span>
-        </div>
-        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">模型微调实验</h3>
-        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：ARC-AGI 推理与模型微调，沉淀评测闭环。</p>
-        <div class="mt-2 flex flex-col gap-1">
-          <a href="https://www.kaggle.com/code/lelexihongshi/arc-agi-3-milestone-2-solution/" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">ARC-AGI 方案 →</a>
-          <a href="https://www.kaggle.com/code/lelexihongshi/notebookb36698d6b0" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">微调 notebook →</a>
-        </div>
-      </article>
-      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:60ms]">
-        <div class="flex items-center gap-2">
-          <span class="sig-tag sig-tag-plain">GitHub</span>
-          <span class="sig-tag sig-tag-tomato">Gitee</span>
-        </div>
-        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">写作 Agent</h3>
-        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：小说与技术类写作 Agent。</p>
-        <div class="mt-2 flex flex-col gap-1">
-          <a href="https://github.com/xihongshi567/novel-ai-agent-v2" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">小说写作 agent →</a>
-          <a href="https://gitee.com/he-xihongshi/modou" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">技术类写作 agent →</a>
-        </div>
-      </article>
-      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:120ms]">
-        <div class="flex items-center gap-2">
-          <span class="sig-tag sig-tag-tomato">Gitee</span>
-        </div>
-        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">电商售后 Chatbot</h3>
-        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：面向售后场景的对话机器人。</p>
-        <a href="https://gitee.com/he-xihongshi/tomotobot" target="_blank" rel="noreferrer" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">tomotobot →</a>
-      </article>
-      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:180ms]">
-        <div class="flex items-center gap-2">
-          <span class="sig-tag sig-tag-plain">GitHub</span>
-        </div>
-        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">MCP &amp; Skill</h3>
-        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：为 Agent 生态造的组件。</p>
-        <div class="mt-2 flex flex-col gap-1">
-          <a href="https://github.com/xihongshi567/modou-tools-mcp" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">情报收集 MCP →</a>
-          <a href="https://github.com/xihongshi567/agent-skill" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">技术选型 Skill →</a>
-        </div>
-      </article>
-      <article class="rounded-3xl border border-border bg-card p-4 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-1 [animation-delay:240ms]">
-        <div class="flex items-center gap-2">
-          <span class="sig-tag sig-tag-peach">魔塔</span>
-        </div>
-        <h3 class="sig-display mt-2.5 text-sm font-bold leading-snug">魔塔个人主页</h3>
-        <p class="mt-1 text-xs leading-relaxed text-muted-foreground">示例：ModelScope 上的模型与创空间主页。</p>
-        <a href="https://www.modelscope.cn/profile/lelexihongshi" target="_blank" rel="noreferrer" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors hover:text-primary/70">去魔塔逛逛 →</a>
-      </article>
-
-      <!-- 05 实习经历 -->
+      <!-- 03 实习经历 -->
       <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2">
         <div class="sig-experience-head">
           <span class="sig-field">实习经历</span>
@@ -1101,14 +1048,46 @@
         </div>
       </div>
 
-      <!-- 06 兴趣 -->
+      <!-- 04 兴趣 -->
       <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2 [animation-delay:80ms]">
         <span class="sig-field">闲下来会做的事</span>
-        <div class="mt-3 flex flex-wrap gap-2">
-          <span class="sig-tag sig-tag-tomato">AI 给生活赋能</span>
-          <span class="sig-tag sig-tag-peach">阅读</span>
-          <span class="sig-tag sig-tag-cream">旅行</span>
-          <span class="sig-tag sig-tag-plain">打太极</span>
+        <div class="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-2">
+          <div class="sig-hobby sig-hobby-tomato">
+            <span class="sig-hobby-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></svg>
+            </span>
+            <div class="min-w-0">
+              <h3 class="sig-hobby-title">AI 给生活赋能</h3>
+              <p class="sig-hobby-desc">把 AI 真正用进日常生活和具体场景里。</p>
+            </div>
+          </div>
+          <div class="sig-hobby sig-hobby-peach">
+            <span class="sig-hobby-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+            </span>
+            <div class="min-w-0">
+              <h3 class="sig-hobby-title">阅读</h3>
+              <p class="sig-hobby-desc">喜欢求知求长那一类内容。</p>
+            </div>
+          </div>
+          <div class="sig-hobby sig-hobby-cream">
+            <span class="sig-hobby-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div class="min-w-0">
+              <h3 class="sig-hobby-title">旅行</h3>
+              <p class="sig-hobby-desc">换个环境看世界。</p>
+            </div>
+          </div>
+          <div class="sig-hobby sig-hobby-plain">
+            <span class="sig-hobby-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><circle cx="12" cy="12" r="9"/><path d="M12 3a4.5 4.5 0 0 1 0 9 4.5 4.5 0 0 0 0 9"/><circle cx="9" cy="7.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg>
+            </span>
+            <div class="min-w-0">
+              <h3 class="sig-hobby-title">打太极</h3>
+              <p class="sig-hobby-desc">动静之间找平衡。</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
