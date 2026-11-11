@@ -1,5 +1,26 @@
 # 个人技能
 
+## 产品能力
+- 熟悉中后台及 AI 产品的需求调研、需求分析、产品设计、PRD 撰写、用户手册编写、测试验收与缺陷跟踪闭环
+- 使用墨刀、Axure 等工具产出原型图
+
+## AI / NLP 与业务思考
+- 做过文本挖掘：分词、关键词提取、文本分类、VOC 分析
+- 熟悉 BERT 语义匹配与意图识别
+- 了解 LLM、Prompt、RAG、Agent 工具调用、LangGraph、QLoRA 微调、幻觉防控等大模型应用
+
+## 证书与语言
+- 通过 CET-4、CET-6
+- 能够阅读英文项目文档
+
+## 开发与工具
+- 熟练将 AI 辅助工具（Vibe Coding、Codex、Claude Code 等）应用于产品工作流和业务场景
+- 在魔搭平台与 GitHub 上有自己的 Skill 仓库与独立开发的 MCP 服务
+
+## 数据分析
+- 熟练使用 SQL、Python（Pandas）、Tableau、Excel 进行取数与分析
+- 熟悉漏斗分析、分组对比、A/B 测试、VOC 分析与业务指标看板搭建
+
 ## AI / Agent 开发
 - 熟悉 Context Engineering 与 Prompt Engineering
 - 了解 Agent 评估与测评流程

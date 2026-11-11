@@ -245,6 +245,278 @@
     }
     .sig-experience-item:nth-child(2) .sig-experience-points li::before { background: var(--sig-tomato-soft); }
 
+    /* 个人能力：能力卡 + 标签芯片 */
+    /* 作品集图谱：独立一格，知识图谱铺满整格 */
+    .sig-merged-card {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+    }
+    @media (min-width: 768px) {
+      .sig-merged-card { height: 560px; }
+    }
+    @media (max-width: 767px) {
+      .sig-merged-card { height: 420px; }
+    }
+    .sig-merged-graph {
+      position: absolute;
+      inset: 0;
+    }
+    /* 覆盖 #wf-wrap 的 ID 级 position:relative，让图谱真正铺满整格 */
+    #wf-wrap.sig-merged-graph {
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+    /* 宽屏时限制图谱宽度并居中，避免节点被拉得过扁 */
+    @media (min-width: 1024px) {
+      #wf-wrap.sig-merged-graph {
+        left: 50%;
+        right: auto;
+        width: min(100%, 980px);
+        transform: translateX(-50%);
+      }
+    }
+    /* 图谱四周白雾渐隐，让画面朦胧干净 */
+    .sig-merged-fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 22%;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(255, 252, 248, .92) 8%, rgba(255, 252, 248, 0) 100%);
+    }
+    .sig-merged-head {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      z-index: 6;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .sig-merged-head > * { pointer-events: auto; }
+
+    /* 个人能力：独立一格，卡牌轮播 + 补充技能清单 */
+    .sig-skill-card {
+      display: flex;
+      flex-direction: column;
+    }
+    .sig-skill-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .sig-skill-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .sig-skill-side { display: grid; gap: 10px; }
+    @media (min-width: 768px) {
+      .sig-skill-side { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+    }
+    .sig-skill-block {
+      padding: 12px 14px;
+      border: 1px solid var(--sig-line);
+      border-radius: 18px 20px 17px 21px;
+      background: rgba(255, 255, 255, .72);
+    }
+    .sig-skill-block:nth-child(2) { border-color: rgba(231, 193, 198, .72); }
+    .sig-skill-block h4 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--sig-ink);
+    }
+    .sig-skill-block h4::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--sig-tomato);
+      flex-shrink: 0;
+    }
+    .sig-skill-block:nth-child(2) h4::before { background: var(--sig-butter); }
+    .sig-skill-block:nth-child(3) h4::before { background: var(--sig-mint); }
+    .sig-skill-block p {
+      margin-top: 5px;
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: var(--sig-ink-soft);
+    }
+
+    .sig-ability-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--sig-ink-soft);
+    }
+    .sig-ability-label::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--sig-tomato);
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 0 1px var(--sig-line);
+      flex-shrink: 0;
+    }
+    .sig-ability-label:first-child { margin-top: 0; }
+
+    /* 个人能力：堆叠卡牌轮播 */
+    .sig-deck {
+      position: relative;
+      margin-top: 12px;
+    }
+    .sig-deck-stage {
+      position: relative;
+      height: 220px; /* JS 按内容实测覆盖 */
+      overflow: hidden;
+      touch-action: pan-y;
+      cursor: grab;
+    }
+    .sig-deck-stage.is-dragging { cursor: grabbing; }
+    .sig-deck-stage.is-dragging .sig-cap-card { transition: none; }
+
+    .sig-cap-card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: calc(100% - 18px);
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 0;
+      border-radius: 20px;
+      background: #FFFFFF;
+      box-shadow: 0 6px 16px rgba(149, 101, 110, .09);
+      transform-origin: right center;
+      will-change: transform, opacity;
+      transition: transform .4s cubic-bezier(.2, .8, .2, 1), opacity .4s cubic-bezier(.2, .8, .2, 1), box-shadow .4s cubic-bezier(.2, .8, .2, 1);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .sig-cap-card.is-front {
+      box-shadow: 0 16px 38px rgba(149, 101, 110, .14), 0 3px 8px rgba(149, 101, 110, .07);
+    }
+    .sig-cap-icon {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+    }
+    .sig-cap-icon[data-tone="tomato"] { background: var(--sig-tomato-soft); color: var(--sig-tomato-deep); border: 1px solid #F5D9DD; }
+    .sig-cap-icon[data-tone="peach"] { background: var(--sig-butter); color: #A98B4F; border: 1px solid #F1E3BD; }
+    .sig-cap-icon[data-tone="cream"] { background: var(--sig-mint); color: #5E9E7C; border: 1px solid #D6EBDF; }
+    .sig-cap-icon[data-tone="plain"] { background: #FFFFFF; color: var(--sig-ink-soft); border: 1px solid var(--sig-line); }
+    .sig-cap-icon[data-tone="sky"] { background: var(--sig-sky); color: #5B8A9B; border: 1px solid #DCEAF0; }
+    .sig-cap-main { min-width: 0; flex: 1; }
+    .sig-cap-title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+    .sig-cap-title b { font-size: 13px; font-weight: 800; color: var(--sig-ink); }
+    .sig-cap-level {
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: .02em;
+    }
+    .sig-cap-level[data-tone="tomato"] { background: var(--sig-tomato-soft); color: var(--sig-tomato-deep); }
+    .sig-cap-level[data-tone="peach"] { background: var(--sig-butter); color: #A98B4F; }
+    .sig-cap-level[data-tone="cream"] { background: var(--sig-mint); color: #5E9E7C; }
+    .sig-cap-level[data-tone="plain"] { background: #FFFFFF; color: var(--sig-ink-soft); border: 1px solid var(--sig-line); }
+    .sig-cap-desc {
+      margin-top: 5px;
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: var(--sig-ink-soft);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .sig-cap-chips { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .sig-cap-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1.45;
+      background: #FFFFFF;
+      border: 1px solid var(--sig-line);
+      color: var(--sig-ink-soft);
+    }
+    .sig-cap-chip[data-tone="tomato"] { background: var(--sig-tomato-soft); border-color: #F5D9DD; color: var(--sig-tomato-deep); }
+    .sig-cap-chip[data-tone="peach"] { background: var(--sig-butter); border-color: #F1E3BD; color: #A98B4F; }
+    .sig-cap-chip[data-tone="cream"] { background: var(--sig-mint); border-color: #D6EBDF; color: #5E9E7C; }
+
+    /* 轮播控制条 */
+    .sig-deck-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .sig-deck-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      background: #FFFFFF;
+      color: var(--sig-ink);
+      box-shadow: 0 4px 12px rgba(149, 101, 110, .12);
+      transition: transform .2s var(--sig-ease-bounce), color .2s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .sig-deck-btn svg { width: 16px; height: 16px; }
+    .sig-deck-btn:hover:not(:disabled) {
+      color: var(--sig-tomato-deep);
+      box-shadow: 0 6px 16px rgba(149, 101, 110, .18);
+      transform: translateY(-1px);
+    }
+    .sig-deck-btn:active:not(:disabled) { transform: scale(.9); }
+    .sig-deck-btn:disabled { opacity: .32; cursor: default; }
+    .sig-deck-dots { display: flex; align-items: center; gap: 7px; }
+    .sig-deck-dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: var(--sig-line);
+      transition: width .3s var(--sig-ease-bounce), background-color .3s ease;
+    }
+    .sig-deck-dot.is-active { width: 20px; background: var(--sig-tomato); }
+    .sig-deck-dot:hover:not(.is-active) { background: var(--sig-tomato-soft); }
+    @media (prefers-reduced-motion: reduce) {
+      .sig-cap-card { transition: none; }
+      .sig-deck-btn { transition: none; }
+    }
+
     /* 作品集：知识图谱 */
     .sig-graph { display: block; width: 100%; height: auto; }
     .sig-graph .node-bg { fill: #FFFFFF; stroke: var(--sig-line); transition: fill 0.2s ease, stroke 0.2s ease; }
@@ -482,7 +754,7 @@
       display: flex;
       align-items: center;
       gap: 11px;
-      padding: 11px 14px;
+      padding: 13px 15px;
       border: 1px solid var(--sig-line);
       border-radius: 16px 20px 15px 18px;
       background: rgba(255, 255, 255, .72);
@@ -494,8 +766,8 @@
       flex-shrink: 0;
       display: grid;
       place-items: center;
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       border-radius: 999px;
     }
     .sig-hobby-tomato .sig-hobby-icon { background: var(--sig-tomato-soft); color: var(--sig-tomato-deep); border: 1px solid #F5D9DD; }
@@ -661,7 +933,7 @@
     #bento > :nth-child(1) { border-radius: 30px 42px 34px 46px; }
     #bento > :nth-child(2) { border-radius: 38px 30px 44px 32px; }
     #bento > :nth-child(3) { border-radius: 40px 28px 36px 30px; background: linear-gradient(145deg, #FFFDF9, var(--sig-lilac)); }
-    #bento > :nth-child(4) { border-radius: 26px 38px 30px 42px; background: var(--sig-sky); }
+    #bento > :nth-child(4) { border-radius: 26px 38px 30px 42px; }
     #bento > :nth-child(5) { border-radius: 30px 40px 26px 36px; background: var(--sig-mint); }
     .sig-pet-button,
     .sig-chat-backdrop,
@@ -937,11 +1209,11 @@
   </header>
 
   <main class="container pb-8 md:pb-10">
-    <!-- ===== 便当盒主网格：头像主格 + 聊天大格 + 信息小格 ===== -->
-    <section id="bento" class="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-5">
+    <!-- ===== 便当盒主网格：头像主格 + 聊天大格（4/6 宽）+ 合并卡 + 信息小格 ===== -->
+    <section id="bento" class="grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
 
       <!-- 01 头像主格 -->
-      <div class="sig-room-card relative flex flex-col items-center justify-center rounded-3xl border border-border bg-card p-6 py-7 text-center animate-bento-in md:col-span-2 md:row-span-2">
+      <div class="sig-room-card relative flex flex-col items-center justify-center rounded-3xl border border-border bg-card p-6 py-7 text-center animate-bento-in md:col-span-2 md:row-span-3">
         <span class="sig-welcome absolute left-6 top-5 text-[11px] tracking-normal">认识一下</span>
         <div class="sig-avatar-wrap relative mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-primary md:h-32 md:w-32">
           <span class="absolute -inset-2.5 rounded-full border-2 border-dashed border-primary/40"></span>
@@ -977,7 +1249,7 @@
       </div>
 
       <!-- 数字分身聊天大格：右侧通栏 -->
-      <div id="chat" class="sig-chat-card flex flex-col overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-xl shadow-primary/10 animate-bento-in [animation-delay:120ms] md:order-none md:col-span-2 md:row-span-5">
+      <div id="chat" class="sig-chat-card flex flex-col overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-xl shadow-primary/10 animate-bento-in [animation-delay:120ms] md:order-none md:col-span-4 md:row-span-3 md:min-h-[560px]">
         <div class="flex shrink-0 items-center gap-3 border-b border-primary/10 bg-primary/5 px-5 py-4">
           <span class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground">媛<span class="sig-online absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-card"></span></span>
           <div class="min-w-0 flex-1">
@@ -1007,20 +1279,171 @@
         </form>
       </div>
 
-      <!-- 02 作品集：知识图谱 -->
-      <article class="rounded-3xl border border-primary/20 bg-primary/5 p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2 [animation-delay:140ms]">
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <span class="sig-field">作品集 · 知识图谱</span>
-          <span class="rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary shadow-sm">点击分类折叠 · 点击作品看详情</span>
-        </div>
-        <div id="wf-wrap" class="mt-4" role="group" aria-label="何媛的作品知识图谱：4 个分类、8 个作品节点">
+      <!-- 02 作品集 · 知识图谱（左侧一格：图谱铺满整格） -->
+      <article class="sig-merged-card rounded-3xl border border-primary/20 bg-primary/5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-3 [animation-delay:140ms]">
+        <div id="wf-wrap" class="sig-merged-graph" role="group" aria-label="何媛的作品知识图谱：4 个分类、8 个作品节点">
           <svg id="wf-svg" role="img" aria-label="何媛的作品知识图谱，可拖动与缩放，点击分类折叠，点击作品查看详情"></svg>
           <div id="wf-tip" class="wf-tip" role="tooltip"></div>
         </div>
+
+        <!-- 底部渐隐过渡 -->
+        <div class="sig-merged-fade" aria-hidden="true"></div>
+
+        <!-- 顶部标题 -->
+        <div class="sig-merged-head">
+          <span class="sig-field">作品集 · 知识图谱</span>
+          <span class="rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary shadow-sm">点击分类折叠 · 点击作品看详情</span>
+        </div>
+      </article>
+
+      <!-- 02b 个人能力（右侧一格：卡牌轮播，内容左对齐） -->
+      <article class="sig-skill-card rounded-3xl border border-primary/20 bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-3 [animation-delay:170ms]">
+        <div class="sig-skill-head">
+          <span class="sig-field">个人能力</span>
+          <span class="rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary shadow-sm">产品 · AI/NLP · 开发 · 数据</span>
+        </div>
+        <div class="sig-skill-body">
+          <div class="sig-deck">
+            <div class="sig-deck-stage" id="cap-deck-stage" role="group" aria-roledescription="轮播" aria-label="个人能力卡牌">
+            <article class="sig-cap-card" data-tone="tomato">
+              <span class="sig-cap-icon" data-tone="tomato" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>
+              </span>
+              <div class="sig-cap-main">
+                <div class="sig-cap-title">
+                  <b>产品能力</b>
+                  <span class="sig-cap-level" data-tone="tomato">中后台 · AI 产品</span>
+                </div>
+                <p class="sig-cap-desc">熟悉中后台及 AI 产品的需求调研 → 需求分析 → 产品设计 → PRD 撰写 → 用户手册编写 → 测试验收与缺陷跟踪的完整闭环；使用墨刀、Axure 等工具产出原型图。</p>
+                <div class="sig-cap-chips">
+                  <span class="sig-cap-chip" data-tone="tomato">需求调研</span>
+                  <span class="sig-cap-chip" data-tone="tomato">PRD 撰写</span>
+                  <span class="sig-cap-chip" data-tone="tomato">原型设计</span>
+                  <span class="sig-cap-chip" data-tone="plain">用户手册</span>
+                  <span class="sig-cap-chip" data-tone="plain">测试验收</span>
+                  <span class="sig-cap-chip" data-tone="plain">缺陷跟踪</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="sig-cap-card" data-tone="peach">
+              <span class="sig-cap-icon" data-tone="peach" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><circle cx="12" cy="12" r="9"/><path d="M12 3a4.5 4.5 0 0 1 0 9 4.5 4.5 0 0 0 0 9"/><circle cx="9" cy="7.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="16.5" r="1.4" fill="currentColor" stroke="none"/></svg>
+              </span>
+              <div class="sig-cap-main">
+                <div class="sig-cap-title">
+                  <b>AI / NLP 与业务思考</b>
+                  <span class="sig-cap-level" data-tone="peach">做过文本挖掘</span>
+                </div>
+                <p class="sig-cap-desc">做过文本挖掘（分词、关键词提取、文本分类、VOC 分析）；熟悉 BERT 语义匹配与意图识别；了解 LLM、Prompt、RAG、Agent 工具调用、LangGraph、QLoRA 微调、幻觉防控等大模型应用。</p>
+                <div class="sig-cap-chips">
+                  <span class="sig-cap-chip" data-tone="peach">文本挖掘</span>
+                  <span class="sig-cap-chip" data-tone="peach">BERT 语义匹配</span>
+                  <span class="sig-cap-chip" data-tone="peach">意图识别</span>
+                  <span class="sig-cap-chip" data-tone="plain">VOC 分析</span>
+                  <span class="sig-cap-chip" data-tone="plain">LLM / Prompt</span>
+                  <span class="sig-cap-chip" data-tone="plain">RAG</span>
+                  <span class="sig-cap-chip" data-tone="plain">Agent 工具调用</span>
+                  <span class="sig-cap-chip" data-tone="plain">LangGraph</span>
+                  <span class="sig-cap-chip" data-tone="plain">QLoRA 微调</span>
+                  <span class="sig-cap-chip" data-tone="plain">幻觉防控</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="sig-cap-card" data-tone="cream">
+              <span class="sig-cap-icon" data-tone="cream" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/><path d="m8.5 13.5-1.5 8L12 19l5 2.5-1.5-8"/></svg>
+              </span>
+              <div class="sig-cap-main">
+                <div class="sig-cap-title">
+                  <b>证书与语言</b>
+                  <span class="sig-cap-level" data-tone="cream">CET-4 / CET-6</span>
+                </div>
+                <p class="sig-cap-desc">已通过 CET-4 与 CET-6，能够阅读英文项目文档与技术资料。</p>
+                <div class="sig-cap-chips">
+                  <span class="sig-cap-chip" data-tone="cream">CET-4</span>
+                  <span class="sig-cap-chip" data-tone="cream">CET-6</span>
+                  <span class="sig-cap-chip" data-tone="plain">英文文档阅读</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="sig-cap-card" data-tone="sky">
+              <span class="sig-cap-icon" data-tone="sky" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m8 6-6 6 6 6M16 6l6 6-6 6M13.5 4l-3 16"/></svg>
+              </span>
+              <div class="sig-cap-main">
+                <div class="sig-cap-title">
+                  <b>开发与工具</b>
+                  <span class="sig-cap-level" data-tone="plain">AI 辅助开发</span>
+                </div>
+                <p class="sig-cap-desc">熟练将 AI 辅助工具（Vibe Coding、Codex、Claude Code 等）应用于产品工作流与业务场景；在魔搭平台与 GitHub 上有自己的 Skill 仓库与独立开发的 MCP 服务。</p>
+                <div class="sig-cap-chips">
+                  <span class="sig-cap-chip" data-tone="sky">Vibe Coding</span>
+                  <span class="sig-cap-chip" data-tone="sky">Codex</span>
+                  <span class="sig-cap-chip" data-tone="sky">Claude Code</span>
+                  <span class="sig-cap-chip" data-tone="plain">魔搭平台</span>
+                  <span class="sig-cap-chip" data-tone="plain">GitHub</span>
+                  <span class="sig-cap-chip" data-tone="plain">Skill 仓库</span>
+                  <span class="sig-cap-chip" data-tone="plain">MCP 服务</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="sig-cap-card" data-tone="plain">
+              <span class="sig-cap-icon" data-tone="plain" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M3 3v18h18"/><path d="M7 16v-5M12 16V7M17 16v-3"/></svg>
+              </span>
+              <div class="sig-cap-main">
+                <div class="sig-cap-title">
+                  <b>数据分析</b>
+                  <span class="sig-cap-level" data-tone="plain">取数 → 洞察</span>
+                </div>
+                <p class="sig-cap-desc">熟练使用 SQL、Python（Pandas）、Tableau、Excel 进行取数与分析；熟悉漏斗分析、分组对比、A/B 测试、VOC 分析与业务指标看板搭建。</p>
+                <div class="sig-cap-chips">
+                  <span class="sig-cap-chip" data-tone="plain">SQL</span>
+                  <span class="sig-cap-chip" data-tone="plain">Python · Pandas</span>
+                  <span class="sig-cap-chip" data-tone="plain">Tableau</span>
+                  <span class="sig-cap-chip" data-tone="plain">Excel</span>
+                  <span class="sig-cap-chip" data-tone="plain">漏斗分析</span>
+                  <span class="sig-cap-chip" data-tone="plain">A/B 测试</span>
+                  <span class="sig-cap-chip" data-tone="plain">指标看板</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="sig-deck-controls">
+            <button type="button" class="sig-deck-btn" id="cap-deck-prev" aria-label="上一张能力卡">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div class="sig-deck-dots" id="cap-deck-dots" role="tablist" aria-label="能力卡切换"></div>
+            <button type="button" class="sig-deck-btn" id="cap-deck-next" aria-label="下一张能力卡">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+            </div>
+
+            <div class="sig-skill-side">
+              <section class="sig-skill-block">
+                <h4>AI / Agent 开发</h4>
+                <p>熟悉 Context Engineering 与 Prompt Engineering，了解 Agent 评估与测评流程，以及 LlamaIndex、RAG 检索增强生成与 LangGraph 等主流 Agent 开发框架。</p>
+              </section>
+              <section class="sig-skill-block">
+                <h4>代码能力</h4>
+                <p>熟悉 Python（异步 IO、文件 I/O），使用 Codex、Claude Code 辅助开发；了解 Docker、Git & PR 流程，以及大模型微调、知识蒸馏、Agentic RL。</p>
+              </section>
+              <section class="sig-skill-block">
+                <h4>课程体系</h4>
+                <p>成都理工大学（双一流）大数据管理与应用专业：Python 语言程序设计、图像分析与深度学习、文本分析与挖掘；选修互联网商业智能、商务大数据分析、时空序列数据分析等 AI 相关课程。</p>
+              </section>
+            </div>
+          </div>
       </article>
 
       <!-- 03 实习经历 -->
-      <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2">
+      <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-3">
         <div class="sig-experience-head">
           <span class="sig-field">实习经历</span>
         </div>
@@ -1030,9 +1453,9 @@
             <h3 class="sig-experience-role">AI 应用实习生</h3>
             <p class="sig-experience-company">四川爱迪沛霖数据信息技术有限公司</p>
             <ul class="sig-experience-points">
-              <li>搭起医疗评测的「通用集 + 黄金基准集」闭环，沉淀 1500+ 条覆盖全场景的评测用例</li>
-              <li>用一致性 + 置信度双维度评分，归因 300+ 错例、迭代 15+ 版 prompt，把模型打分漂移压到可控</li>
-              <li>把批量推理 / 打分 / 失败重试 / 问题分级串成一条流水线，单批处理量 ×5、人工成本 -72%</li>
+              <li>搭建医疗指南评测知识库，对指南条款做单元化拆分与哈希寻址；面向不同检索意图构建金标，分层构建覆盖多类边界场景的评测语料，为 RAG 检索链路的自动化评测提供基准</li>
+              <li>把 RAG 检索层指标分为三类：门禁指标区分是否可以上线，诊断指标定位故障，趋势指标区分不同检索策略效果</li>
+              <li>参与搭建 badcase 台账管理机制，配套状态机闭环流程，要求修复后沉淀回归用例，打通从问题捕获、根因归因到回归防护的链路</li>
             </ul>
           </article>
           <article class="sig-experience-item">
@@ -1049,7 +1472,7 @@
       </div>
 
       <!-- 04 兴趣 -->
-      <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-2 [animation-delay:80ms]">
+      <div class="rounded-3xl border border-border bg-card p-5 opacity-0 translate-y-[18px] scale-[0.97] intersect:animate-bento-in md:col-span-3 [animation-delay:80ms]">
         <span class="sig-field">闲下来会做的事</span>
         <div class="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-2">
           <div class="sig-hobby sig-hobby-tomato">
@@ -1088,6 +1511,24 @@
               <p class="sig-hobby-desc">动静之间找平衡。</p>
             </div>
           </div>
+          <div class="sig-hobby sig-hobby-cream">
+            <span class="sig-hobby-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M2 12h20"/><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="m4 8 16-4"/><path d="m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.46l.45 1.8"/></svg>
+            </span>
+            <div class="min-w-0">
+              <h3 class="sig-hobby-title">做饭</h3>
+              <p class="sig-hobby-desc">自己动手，喂饱自己也喂饱朋友。</p>
+            </div>
+          </div>
+          <div class="sig-hobby sig-hobby-peach">
+            <span class="sig-hobby-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
+            </span>
+            <div class="min-w-0">
+              <h3 class="sig-hobby-title">听播客</h3>
+              <p class="sig-hobby-desc">通勤路上补补 AI 圈的八卦。</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1117,6 +1558,200 @@
     <span class="text-sm font-medium leading-none">邮箱已复制到剪贴板</span>
   </div>
 
+  <!-- ===== 个人能力：堆叠卡牌轮播 ===== -->
+  <script>
+    (function () {
+      var stage = document.getElementById('cap-deck-stage');
+      if (!stage) return;
+      var cards = Array.prototype.slice.call(stage.querySelectorAll('.sig-cap-card'));
+      if (!cards.length) return;
+
+      var dotsWrap = document.getElementById('cap-deck-dots');
+      var prevBtn = document.getElementById('cap-deck-prev');
+      var nextBtn = document.getElementById('cap-deck-next');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* 堆叠参数：顶层 100%，第二层向右偏移 8px / scale .96，第三层偏移 16px / scale .92 */
+      var LAYERS = [
+        { x: 0, y: 0, scale: 1, opacity: 1 },
+        { x: 8, y: 4, scale: 0.96, opacity: 0.9 },
+        { x: 16, y: 8, scale: 0.92, opacity: 0.78 }
+      ];
+
+      var index = 0;
+      var total = cards.length;
+      var stageWidth = 0;
+      var cardHeight = 0;
+
+      /* 卡片实际宽高靠 stage 宽度反推：卡片宽度 = stage 宽 - 18px（右侧留出堆叠偏移余量） */
+      function measure() {
+        stageWidth = stage.clientWidth;
+        if (!stageWidth) return;
+        cards.forEach(function (card) {
+          card.style.width = (stageWidth - 18) + 'px';
+        });
+        /* 舞台高度取所有卡片自然高度的最大值，避免切换时跳动 */
+        var maxH = 0;
+        cards.forEach(function (card) {
+          var prevH = card.style.height;
+          card.style.height = 'auto';
+          maxH = Math.max(maxH, card.offsetHeight);
+          card.style.height = prevH;
+        });
+        cardHeight = maxH;
+        stage.style.height = (cardHeight + 12) + 'px';
+      }
+
+      function layout() {
+        cards.forEach(function (card, i) {
+          /* 相对当前顶层的环距：0=顶层，1=第二层，2=第三层，更远则隐藏 */
+          var dist = (i - index + total) % total;
+          var layer = LAYERS[dist];
+          if (!layer) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(-24px) scale(0.9)';
+            card.style.pointerEvents = 'none';
+            card.classList.remove('is-front');
+            card.setAttribute('aria-hidden', 'true');
+            return;
+          }
+          card.style.opacity = String(layer.opacity);
+          card.style.transform = 'translate(' + layer.x + 'px,' + layer.y + 'px) scale(' + layer.scale + ')';
+          card.style.pointerEvents = dist === 0 ? 'auto' : 'none';
+          card.style.zIndex = String(total - dist);
+          card.classList.toggle('is-front', dist === 0);
+          if (dist === 0) {
+            card.removeAttribute('aria-hidden');
+          } else {
+            card.setAttribute('aria-hidden', 'true');
+          }
+        });
+        if (dotsWrap) {
+          Array.prototype.forEach.call(dotsWrap.children, function (dot, i) {
+            dot.classList.toggle('is-active', i === index);
+            dot.setAttribute('aria-selected', i === index ? 'true' : 'false');
+          });
+        }
+        if (prevBtn) prevBtn.disabled = false;
+        if (nextBtn) nextBtn.disabled = false;
+      }
+
+      function go(next, animate) {
+        if (next === index) return;
+        index = (next + total) % total;
+        if (animate === false && reduceMotion) {
+          layout();
+          return;
+        }
+        layout();
+      }
+
+      function buildDots() {
+        if (!dotsWrap) return;
+        dotsWrap.innerHTML = '';
+        for (var i = 0; i < total; i++) {
+          (function (i) {
+            var dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'sig-deck-dot';
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-label', '第 ' + (i + 1) + ' 张能力卡');
+            dot.addEventListener('click', function () { go(i); });
+            dotsWrap.appendChild(dot);
+          })(i);
+        }
+      }
+
+      buildDots();
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () { go(index - 1); });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () { go(index + 1); });
+      }
+
+      /* 键盘：舞台可聚焦，左右方向键切换 */
+      stage.setAttribute('tabindex', '0');
+      stage.addEventListener('keydown', function (event) {
+        if (event.key === 'ArrowLeft') { event.preventDefault(); go(index - 1); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); go(index + 1); }
+      });
+
+      /* 左右拖拽切换（指针事件，支持鼠标 / 触摸 / 触控笔） */
+      var dragStartX = 0;
+      var dragStartY = 0;
+      var dragging = false;
+      var axisLocked = null;
+      var THRESHOLD = 55;
+
+      stage.addEventListener('pointerdown', function (event) {
+        if (event.button !== undefined && event.button !== 0) return;
+        dragging = true;
+        axisLocked = null;
+        dragStartX = event.clientX;
+        dragStartY = event.clientY;
+      });
+
+      stage.addEventListener('pointermove', function (event) {
+        if (!dragging) return;
+        var dx = event.clientX - dragStartX;
+        var dy = event.clientY - dragStartY;
+        if (axisLocked === null) {
+          /* 首次有效移动时锁定轴向：横向优先，避免与页面纵向滚动打架 */
+          if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+            axisLocked = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+            if (axisLocked === 'x') {
+              stage.classList.add('is-dragging');
+              stage.setPointerCapture(event.pointerId);
+            }
+          }
+        }
+        if (axisLocked !== 'x') return;
+        /* 拖拽时让顶层卡跟随手指 */
+        var front = cards[index];
+        if (!front) return;
+        var pull = Math.max(-70, Math.min(70, dx * 0.35));
+        front.style.transform = 'translate(' + pull + 'px,0px) scale(1)';
+      });
+
+      function endDrag(event) {
+        if (!dragging) return;
+        dragging = false;
+        var dx = event.clientX - dragStartX;
+        var dy = event.clientY - dragStartY;
+        var wasHorizontal = axisLocked === 'x';
+        stage.classList.remove('is-dragging');
+        axisLocked = null;
+        if (wasHorizontal && Math.abs(dx) > THRESHOLD) {
+          go(index + (dx < 0 ? 1 : -1));
+        } else {
+          layout();
+        }
+      }
+
+      stage.addEventListener('pointerup', endDrag);
+      stage.addEventListener('pointercancel', endDrag);
+      stage.addEventListener('pointerleave', function (event) {
+        if (dragging && axisLocked === 'x') { endDrag(event); }
+      });
+
+      /* 尺寸变化 → 重测并重排 */
+      var resizeTimer = null;
+      if (typeof ResizeObserver !== 'undefined') {
+        var ro = new ResizeObserver(function () {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function () { measure(); layout(); }, 120);
+        });
+        ro.observe(stage);
+      }
+
+      measure();
+      layout();
+      window.addEventListener('load', function () { measure(); layout(); });
+    })();
+  </script>
+
   <script>
     /* 数字分身真实接口调用 + 本地兜底 + 邮箱复制 + 点赞 */
     (function () {
@@ -1124,7 +1759,13 @@
       var KB = [
         { keys: ['联系', '邮箱', '邮件', '微信', 'qq', '沟通', '找到'], a: '最靠谱的方式是邮箱：3432419466@qq.com，点页面右上角或头像下方的按钮就能一键复制。无论是面试邀约还是合作想法，都欢迎邮件和何媛聊聊～' },
         { keys: ['作品', '项目', '主页', '做过什么'], a: '何媛的作品都在主页的「作品集 · 知识图谱」里：模型微调（Kaggle）、写作 Agent、电商售后 Chatbot、情报收集 MCP 与 Agent 技术选型 Skill，还有 vibecoding 做的小工具们。她关注 AI 应用方向，喜欢把 AI 工具真正用进生活和工作里。' },
-        { keys: ['技能', '擅长', '能力', '会什么', '方向'], a: '她最关心两个方向：AI 应用（让 AI 给生活赋能）和知识整理（把散落的信息变成能用的知识）。作为 27 届应届生，她正在秋招阶段，也在持续学习新技能。' },
+        { keys: ['技能', '擅长', '能力', '会什么', '方向'], a: '她的能力覆盖五个方向：产品侧熟悉中后台及 AI 产品的需求调研到测试验收闭环，会用墨刀、Axure 画原型；技术侧做过文本挖掘与 BERT 语义匹配、意图识别，了解 LLM、RAG、Agent、LangGraph、QLoRA 等大模型应用；开发侧把 Vibe Coding、Codex、Claude Code 用进产品工作流，在魔搭和 GitHub 上有自己的 Skill 仓库与 MCP 服务；数据侧熟练 SQL、Pandas、Tableau、Excel，做漏斗分析、A/B 测试和指标看板；语言方面过了 CET-4、CET-6，能读英文项目文档。' },
+        { keys: ['产品', 'prd', '需求', '原型', 'axure', '墨刀', '中后台', '验收', '用户手册'], a: '产品方面她熟悉中后台及 AI 产品的完整闭环：需求调研 → 需求分析 → 产品设计 → PRD 撰写 → 用户手册编写 → 测试验收与缺陷跟踪，并用墨刀、Axure 等工具产出原型图。' },
+        { keys: ['数据', '分析', 'sql', 'pandas', 'tableau', 'excel', 'ab测试', '漏斗', '看板', '取数'], a: '数据分析方面她熟练使用 SQL、Python（Pandas）、Tableau、Excel 进行取数与分析，熟悉漏斗分析、分组对比、A/B 测试、VOC 分析与业务指标看板搭建。' },
+        { keys: ['nlp', 'bert', '语义匹配', '意图识别', '文本挖掘', '分词', '分类', 'voc', 'llm', 'rag', 'agent', 'langgraph', 'qlora', '幻觉'], a: 'AI/NLP 方面她做过文本挖掘（分词、关键词提取、文本分类、VOC 分析），熟悉 BERT 语义匹配与意图识别，也了解 LLM、Prompt、RAG、Agent 工具调用、LangGraph、QLoRA 微调和幻觉防控等大模型应用。' },
+        { keys: ['mcp', 'skill', '仓库', '魔搭', '模型平台', 'vibe', 'codex', 'claude', '开发工具', '辅助开发'], a: '开发方面她熟练把 Vibe Coding、Codex、Claude Code 等 AI 辅助工具用到产品工作流和业务场景里，在魔搭平台与 GitHub 上有自己的 Skill 仓库，还有独立开发的 MCP 服务。' },
+        { keys: ['证书', '英语', 'cet', 'cet4', 'cet6', '四级', '六级', '英文'], a: '语言方面她已通过 CET-4 和 CET-6，能够阅读英文项目文档。' },
+        { keys: ['实习', '工作经历', '经历', '爱迪沛霖', '乐木骆', '评测', '医疗', '指南', 'badcase', '回归', '门禁', '检索指标'], a: '她有两段实习：在四川爱迪沛霖做 AI 应用实习生，搭建医疗指南评测知识库，把指南条款做单元化拆分与哈希寻址、面向不同检索意图构建金标，为 RAG 检索链路的自动化评测提供基准；同时把检索层指标分成门禁指标（判断能否上线）、诊断指标（定位故障）、趋势指标（比较不同检索策略），还参与搭建 badcase 台账管理与状态机闭环流程。现在在深圳乐木骆做 AI 数据实习生，给喂食器场景的猫咪检测搭「自动预标注 + 人工校验」的人机协同流水线。' },
         { keys: ['身份', '应届', '届', '秋招', '学校', '专业', '求职', '在做什么', '最近'], a: '何媛本科就读于成都理工大学（双一流），专业是大数据管理与应用，是 27 届应届生。她现在正处于秋招阶段，也在持续整理作品集、搭建这个个人主页。' },
         { keys: ['兴趣', '爱好', '喜欢', '太极', '阅读', '旅行', '看书'], a: '她的兴趣一动一静：用 AI 给生活赋能、阅读、旅行，还有打太极。要说共同点，大概都属于「求知求学」的一部分吧。' },
         { keys: ['你好', '您好', 'hi', 'hello', '在吗', '是谁', '介绍'], a: '你好呀！我是何媛的数字分身。想了解她的作品、技能还是联系方式？直接问我就好～' }
@@ -1395,13 +2036,15 @@
 
       var state = { collapsed: new Set(), transform: null, fitted: false };
       var sim, nodeG, linkG, defsSel, gSel, zoomBehavior, nodes, links, W, H;
+      /* 底部被悬浮能力卡面板遮挡的高度（px），图谱拟合时避开 */
+      var FLOAT_RESERVE = 0;
       var lastWidth = wrap.clientWidth;
       var ro = null, rebuildTimer = null;
 
       function geometry(canvasW) {
-        /* 星型布局直径由药丸宽度决定，画布比例尽量接近方形以减少 fit 缩字 */
-        H = clamp(340, canvasW * 0.78, 560);
+        /* 铺满容器：宽高都取容器实际尺寸，图谱作为整卡背景 */
         W = canvasW;
+        H = wrap.clientHeight || 620;
         /* 参数以 H=560 为基准，随画布高度归一收缩，避免窄容器下 fit 缩字过小 */
         var s = H / 560;
         return {
@@ -1470,7 +2113,9 @@
 
       function build() {
         var geo = geometry(wrap.clientWidth);
-        wrap.style.height = H + 'px';
+        /* 图谱独占一格，无悬浮面板遮挡 */
+        FLOAT_RESERVE = 0;
+        /* 容器高度由 CSS（absolute inset:0）决定，这里不再写回 style.height */
         svgEl.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
         svgEl.setAttribute('width', W);
         svgEl.setAttribute('height', H);
@@ -1481,12 +2126,13 @@
         nodeById = {};
         nodes.forEach(function (n) { nodeById[n.id] = n; });
 
-        /* 初始极坐标布点：根锁中，分类四象限均分偏 22.5°，叶子朝父分类外展开 */
+        /* 初始极坐标布点：根锁中（中心上移避开底部悬浮面板），分类四象限均分偏 22.5°，叶子朝父分类外展开 */
+        var centerY = (H - FLOAT_RESERVE) / 2;
         nodes.forEach(function (n) {
-          if (n.type === 'root') { n.x = W / 2; n.y = H / 2; return; }
+          if (n.type === 'root') { n.x = W / 2; n.y = centerY; return; }
           if (n.type === 'cat') {
             n.x = W / 2 + geo.catDist * Math.cos(n.theta);
-            n.y = H / 2 + geo.catDist * Math.sin(n.theta);
+            n.y = centerY + geo.catDist * Math.sin(n.theta);
           }
         });
         nodes.forEach(function (n) {
@@ -1648,9 +2294,13 @@
         });
         if (!isFinite(x0)) return null;
         var bw = x1 - x0, bh = y1 - y0;
-        var k = Math.min(1.15, 0.9 / Math.max(bw / W, bh / H));
+        /* 可视区高度 = 容器高 - 底部悬浮面板占位 */
+        var usableH = Math.max(160, H - FLOAT_RESERVE);
+        /* 缩放必须让节点群完整落在可用区内（含少量边距） */
+        var k = Math.min(1.15, 0.92 / Math.max(bw / W, bh / usableH));
+        /* 垂直居中于「可用区」而非整个容器，避免节点被悬浮面板盖住 */
         return d3.zoomIdentity
-          .translate((W - bw * k) / 2 - x0 * k, (H - bh * k) / 2 - y0 * k)
+          .translate((W - bw * k) / 2 - x0 * k, (usableH - bh * k) / 2 - y0 * k)
           .scale(k);
       }
 
